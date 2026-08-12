@@ -1,0 +1,50 @@
+name: Apply terraform config
+description: Apply terraform latest configuration
+
+inputs:
+  github_role_arn:
+    description: ARN of the role to assume in order to apply terraform configuration
+    required: true
+
+outputs:
+  ecr_url:
+    description: URL of the ECR repository
+    value: ${{ steps.tf.outputs.ecr_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.github_role_arn }}
+        aws-region: eu-west-1
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.6
+
+    - name: Terraform init
+      working-directory: infra
+      shell: bash
+      run: terraform init
+
+    - name: Download plan artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: tfplan
+        path: infra
+
+    - name: Terraform apply
+      working-directory: infra
+      shell: bash
+      run: terraform apply -auto-approve tfplan
+
+    - name: Export outputs
+      id: tf
+      working-directory: infra
+      shell: bash
+      run: |
+        ecr_url=$(terraform output -raw repository_url)
+        echo "ecr_url=$ecr_url" >> "$GITHUB_OUTPUT"

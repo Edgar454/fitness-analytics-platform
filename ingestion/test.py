@@ -12,22 +12,24 @@ import os
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-from src.connectors.google_health.auth import GoogleAuthConnector
-from src.connectors.google_health.neat_connector import GoogleHealthNeatConnector
+from src.connectors.fatsecret.auth import FatSecretAuthConnector
+from src.connectors.fatsecret.nutrition_connector import FatSecretNutritionConnector
 
 load_dotenv()
 
-auth = GoogleAuthConnector(
-    client_id=os.environ["GOOGLE_CLIENT_ID"],
-    client_secret=os.environ["GOOGLE_CLIENT_SECRET"],
-    refresh_token=os.environ["GOOGLE_REFRESH_TOKEN"],
+auth = FatSecretAuthConnector(
+    consumer_key=os.environ["FATSECRET_CONSUMER_KEY"],
+    consumer_secret=os.environ["FATSECRET_CONSUMER_SECRET"],
+    access_token=os.environ["FATSECRET_ACCESS_TOKEN"],
+    access_token_secret=os.environ["FATSECRET_ACCESS_TOKEN_SECRET"],
 )
 
-connector = GoogleHealthNeatConnector(auth=auth)
+
+connector = FatSecretNutritionConnector(auth=auth)
 
 # fenêtre large pour être sûr d'attraper au moins une pesée existante
 until = datetime.utcnow()
-since = until - timedelta(days=90)
+since = until - timedelta(days=15)
 
 print(f"Fetching raw data from {since.isoformat()} to {until.isoformat()}...")
 raw = connector.fetch(since, until)

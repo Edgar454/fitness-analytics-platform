@@ -1,4 +1,3 @@
-from collections import defaultdict
 from datetime import datetime, date as date_
 from decimal import Decimal
 from typing import Optional
@@ -10,39 +9,72 @@ from src.connectors.models.neat_record import NeatRecord
 
 API_BASE = "https://health.googleapis.com/v4/users/me/dataTypes"
 
+# Source unique forcée pour éviter le double comptage entre plateformes
+# (on a observé FITBIT + deux applications HEALTH_CONNECT rapporter des
+# événements qui se chevauchent pour le même intervalle). Valeurs supportées
+# selon la doc REST : "all-sources" (défaut), "google-wearables", "google-sources".
+# À vérifier laquelle correspond réellement à Health Connect côté téléphone —
+# aucune des trois n'a l'air de matcher "HEALTH_CONNECT" littéralement.
+DATA_SOURCE_FAMILY = "google-sources"
 
-def _format_steps(body: dict) -> Optional[Decimal]:
-    count = body.get("count")
-    if count is None:
+
+def _format_steps(rollup_value: dict) -> Optional[tuple[Decimal, str]]:
+    count_sum = rollup_value.get("countSum")
+    if count_sum is None:
         return None
-    return Decimal(count)
+    return Decimal(count_sum), "steps"
 
 
-# Mapping dataType Google Health (kebab-case, tel qu'utilisé dans l'URL)
-# -> configuration nécessaire pour fetch/transform.
-#   json_key   : clé du champ dans la réponse JSON (casse propre à chaque type,
-#                à vérifier au cas par cas — ne pas supposer une transformation
-#                automatique de casse, cf. body-fat -> bodyFat).
-#   is_interval: True si le type utilise interval.civil_start_time (comme steps,
-#                confirmé), False si type "sample" avec sample_time.physical_time
-#                (comme weight/body-fat/height en body_measurement).
-#   format_fn  : extrait la valeur numérique brute depuis le corps du point.
-#   neat_field : nom du champ correspondant sur NeatRecord.
-# Seul "steps" a été vérifié manuellement sur une vraie réponse à ce stade.
+def _format_total_calories(rollup_value: dict) -> Optional[tuple[Decimal, str]]:
+    kcal_sum = rollup_value.get("kcalSum")
+    if kcal_sum is None:
+        return None
+    return Decimal(str(kcal_sum)), "kcal"
+
+
+def _format_active_minutes(rollup_value: dict) -> Optional[tuple[Decimal, str]]:
+    # Somme des trois niveaux d'intensité (LIGHT/MODERATE/VIGOROUS) en une
+    # seule métrique, cohérent avec le champ unique active_minutes attendu
+    # côté daily_health. Si on veut la granularité par intensité plus tard,
+    # il faudra trois metric_name séparés plutôt qu'une somme ici.
+    by_level = rollup_value.get("activeMinutesRollupByActivityLevel", [])
+    total = sum(Decimal(entry["activeMinutesSum"]) for entry in by_level if "activeMinutesSum" in entry)
+    if not by_level:
+        return None
+    return total, "minutes"
+
+
+# Mapping dataType Google Health (kebab-case dans l'URL) -> config.
+#   json_key    : clé du champ "union" dans la réponse rollup.
+#   metric_name : nom de métrique utilisé dans NeatRecord.metric_name.
+#   format_fn   : extrait (value, unit) depuis le rollup_value du type.
+# steps, total-calories et active-minutes vérifiés manuellement sur une vraie
+# réponse dailyRollUp. sleep et resting_hr restent à investiguer.
 DATA_TYPE_CONFIG = {
     "steps": {
         "json_key": "steps",
-        "is_interval": True,
+        "metric_name": "steps",
         "format_fn": _format_steps,
-        "neat_field": "steps",
+    },
+    "total-calories": {
+        "json_key": "totalCalories",
+        "metric_name": "calories_burned",
+        "format_fn": _format_total_calories,
+    },
+    "active-minutes": {
+        "json_key": "activeMinutes",
+        "metric_name": "active_minutes",
+        "format_fn": _format_active_minutes,
     },
 }
 
 
 class GoogleHealthNeatConnector(BaseConnector[NeatRecord]):
     """
-    Connector NEAT s'appuyant sur la Google Health API.
-    Agrège les micro-datapoints (ex: steps par tranche de 10-60s) en un total journalier.
+    Connector NEAT s'appuyant sur la Google Health API, via l'action dailyRollUp
+    (steps/active-minutes/total-calories/etc. ne supportent pas `list`, seulement
+    rollup/dailyRollUp). Une source unique (DATA_SOURCE_FAMILY) est forcée pour
+    éviter le double comptage entre plateformes concurrentes (Fitbit, Health Connect).
     """
 
     connector_name = "google_health"
@@ -61,29 +93,29 @@ class GoogleHealthNeatConnector(BaseConnector[NeatRecord]):
         page_token: str | None = None
         headers = {"Authorization": f"Bearer {self._auth.get_access_token()}"}
 
-        config = DATA_TYPE_CONFIG[data_type]
-        filter_field = data_type.replace("-", "_")
-        time_path = "interval.start_time" if config["is_interval"] else "sample_time.physical_time"
-        filter_expr = (
-            f'{filter_field}.{time_path} >= "{since.strftime("%Y-%m-%dT%H:%M:%SZ")}" AND '
-            f'{filter_field}.{time_path} < "{until.strftime("%Y-%m-%dT%H:%M:%SZ")}"'
-        )
-        params = {"filter": filter_expr}
+        body = {
+            "range": {
+                "start": {"date": {"year": since.year, "month": since.month, "day": since.day}},
+                "end": {"date": {"year": until.year, "month": until.month, "day": until.day}},
+            },
+            "windowSizeDays": 1,
+            "dataSourceFamily": f"users/me/dataSourceFamilies/{DATA_SOURCE_FAMILY}",
+        }
 
         while True:
             if page_token:
-                params["pageToken"] = page_token
+                body["pageToken"] = page_token
 
-            response = requests.get(
-                f"{API_BASE}/{data_type}/dataPoints",
+            response = requests.post(
+                f"{API_BASE}/{data_type}/dataPoints:dailyRollUp",
                 headers=headers,
-                params=params,
+                json=body,
                 timeout=15,
             )
             response.raise_for_status()
             payload = response.json()
 
-            for point in payload.get("dataPoints", []):
+            for point in payload.get("rollupDataPoints", []):
                 point["_data_type"] = data_type
                 points.append(point)
 
@@ -94,45 +126,33 @@ class GoogleHealthNeatConnector(BaseConnector[NeatRecord]):
         return points
 
     def transform(self, raw_data: list[dict]) -> list[NeatRecord]:
-        # Agrégation par jour civil, tous data types confondus dans un même dict.
-        daily: dict[date_, dict[str, Decimal]] = defaultdict(lambda: defaultdict(Decimal))
+        records: list[NeatRecord] = []
 
         for point in raw_data:
             data_type = point["_data_type"]
             config = DATA_TYPE_CONFIG[data_type]
-            body = point[config["json_key"]]
-
-            value = config["format_fn"](body)
-            if value is None:
+            rollup_value = point.get(config["json_key"])
+            if rollup_value is None:
                 continue
 
-            civil = self._extract_civil_date(body, config["is_interval"])
+            formatted = config["format_fn"](rollup_value)
+            if formatted is None:
+                continue
+            value, unit = formatted
+
+            civil = point.get("civilStartTime", {}).get("date")
             if civil is None:
                 continue
+            day = date_(civil["year"], civil["month"], civil["day"])
 
-            daily[civil][config["neat_field"]] += value
-
-        records = []
-        for day, metrics in daily.items():
             records.append(
                 NeatRecord(
                     date=day,
-                    steps=int(metrics["steps"]) if "steps" in metrics else None,
-                    active_minutes=int(metrics["active_minutes"]) if "active_minutes" in metrics else None,
-                    calories_burned=metrics.get("calories_burned"),
-                    sleep_minutes=int(metrics["sleep_minutes"]) if "sleep_minutes" in metrics else None,
-                    resting_hr=int(metrics["resting_hr"]) if "resting_hr" in metrics else None,
+                    metric_name=config["metric_name"],
+                    value=value,
+                    unit=unit,
                     source="google_health",
                 )
             )
-        return records
 
-    @staticmethod
-    def _extract_civil_date(body: dict, is_interval: bool) -> Optional[date_]:
-        if is_interval:
-            civil = body.get("interval", {}).get("civilStartTime", {}).get("date")
-        else:
-            civil = body.get("sampleTime", {}).get("civilTime", {}).get("date")
-        if civil is None:
-            return None
-        return date_(civil["year"], civil["month"], civil["day"])
+        return records

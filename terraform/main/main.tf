@@ -9,6 +9,12 @@ data "aws_subnets" "default" {
   }
 }
 
+module "progress_photo_s3" {
+  source              = "./progress_photo_s3"
+  tags                = local.common_tags
+  progress_photo_bucket_name = var.progress_photo_bucket_name
+}
+
 module "sns" {
   source              = "./sns"
   tags                = local.common_tags

@@ -8,3 +8,19 @@ wheels/
 
 # Virtual environments
 .venv
+
+# terraform state
+*.tfstate
+.terraform
+.terraform/*
+*.tfstate.backup
+*.terraform.lock.hcl
+*.terraform.tfstate.*
+
+# notebooks
+*.ipynb
+
+#certificates
+*.pem
+*.http
+*.env

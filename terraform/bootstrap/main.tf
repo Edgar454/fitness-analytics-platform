@@ -5,5 +5,5 @@ module "s3" {
 
 module "iam" {
     source = "./iam"
-    github_oidc_assume_json = connectors.data.aws_iam_policy_document.github_oidc_assume.json
+    github_oidc_assume_json = data.aws_iam_policy_document.github_oidc_assume.json
 }

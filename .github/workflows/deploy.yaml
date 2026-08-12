@@ -1,0 +1,48 @@
+name: CI/CD pipeline
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+  pages: write
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      infra: ${{ steps.filter.outputs.infra }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            infra:
+              - "terraform/main/**"
+
+  terraform-plan:
+    needs: changes
+    if: needs.changes.outputs.infra == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/plan-terraform
+        with:
+          github_role_arn: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+
+  terraform-apply:
+    needs: [changes, terraform-plan]
+    if: needs.changes.outputs.infra == 'true'
+    environment: terraform-apply
+    runs-on: ubuntu-latest
+    outputs:
+      ecr_url: ${{ steps.tf.outputs.ecr_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/apply-terraform
+        with:
+          github_role_arn: ${{ secrets.AWS_GITHUB_ROLE_ARN }}

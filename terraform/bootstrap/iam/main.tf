@@ -24,7 +24,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "rds:RemoveTagsFromResource",
           "rds:ListTagsForResource"
         ]
-        Resource = "arn:aws:rds:${var.aws_region}:${var.aws_account_id}:db:${var.db_instance_identifier}"
+        Resource = "*"
       },
       {
         Sid    = "RDSSubnetAndParamGroups"

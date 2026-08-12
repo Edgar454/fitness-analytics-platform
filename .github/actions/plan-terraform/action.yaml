@@ -1,0 +1,38 @@
+name: Plan terraform config
+description: Plan using terraform latest configuration
+
+inputs:
+  github_role_arn:
+    description: ARN of the role to assume in order to apply terraform configuration
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.github_role_arn }}
+        aws-region: eu-west-1
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.6
+
+    - name: Terraform init
+      working-directory: infra
+      shell: bash
+      run: terraform init
+
+    - name: Terraform Plan
+      working-directory: infra
+      shell: bash
+      run: terraform plan -out=tfplan
+
+    - name: Upload plan artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: tfplan
+        path: infra/tfplan
+        retention-days: 1

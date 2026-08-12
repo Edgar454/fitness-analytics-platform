@@ -1,5 +1,5 @@
 output "github_bootstrap_role_arn" {
-  value = aws_iam_role.github_bootstrap_role
+  value = module.iam.github_bootstrap_role_arn
 }
 
 output "s3_bucket_name" {

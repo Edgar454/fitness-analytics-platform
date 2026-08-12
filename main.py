@@ -1,5 +1,6 @@
 def main():
-    print("Hello from health-analysis-platform!")
+    import sqlalchemy
+    print(sqlalchemy.__version__)
 
 
 if __name__ == "__main__":
