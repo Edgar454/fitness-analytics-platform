@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = var.progess_photo_bucket_name 
+  bucket = var.progress_photo_bucket_name 
   tags = var.tags
 }
 

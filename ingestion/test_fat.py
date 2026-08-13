@@ -1,23 +1,27 @@
-from datetime import date
-from fatsecret import Fatsecret
+"""
+Test manuel de /api/v1/exercises/progress, pour voir si les PRs y sont
+documentés plus proprement que l'heuristique record_type is not None
+sur /api/v1/workouts.
+"""
+
 import os
+import requests
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
 
-fs = Fatsecret(
-    os.environ["FATSECRET_CONSUMER_KEY"],
-    os.environ["FATSECRET_CONSUMER_SECRET"],
-    session_token=(
-        os.environ["FATSECRET_ACCESS_TOKEN"],
-        os.environ["FATSECRET_ACCESS_TOKEN_SECRET"],
-    ),
-    auth="oauth1",
-)
+API_KEY = os.environ["LYFTA_API_KEY"]
+BASE_URL = "https://my.lyfta.app"
 
-entries = fs.diary.entries_get_v2(date=date.today())
+headers = {"Authorization": f"Bearer {API_KEY}"}
 
-print(f"Entries: {len(entries)}")
+print("=== /api/v1/exercises/progress ===")
+response = requests.get(f"{BASE_URL}/api/v1/exercises/progress", headers=headers, params={"limit": 10})
+print(f"Status: {response.status_code}")
+print(json.dumps(response.json(), indent=2, ensure_ascii=False))
 
-for entry in entries:
-    print(entry)
+print("\n=== /api/v1/exercises/library (échantillon) ===")
+response = requests.get(f"{BASE_URL}/api/v1/exercises/library", headers=headers, params={"limit": 5})
+print(f"Status: {response.status_code}")
+print(json.dumps(response.json(), indent=2, ensure_ascii=False))

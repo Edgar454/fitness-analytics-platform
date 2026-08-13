@@ -1,4 +1,4 @@
-variable "progess_photo_bucket_name" {
+variable "progress_photo_bucket_name" {
     type = string
 }
 

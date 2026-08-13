@@ -46,6 +46,7 @@ class WorkoutSet(FitnessBase):
     session_id: Mapped[int] = mapped_column(ForeignKey("workout_session.id"))
     exercise_id: Mapped[int] = mapped_column(ForeignKey("exercise.id"))
     set_number: Mapped[int]
+    reps: Mapped[Optional[int]]
     is_warmup: Mapped[Optional[bool]]
     weight: Mapped[Decimal]
     rpe: Mapped[Optional[Decimal]]
