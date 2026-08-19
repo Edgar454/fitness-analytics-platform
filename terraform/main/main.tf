@@ -40,7 +40,7 @@ module "network" {
   tags                = local.common_tags
   vpc_id              = data.aws_vpc.default.id
   subnet_ids          = data.aws_subnets.default.ids
-  allowed_cidr_blocks = ["196.115.25.218/32"]
+  allowed_cidr_blocks = ["105.188.69.52/32"]
 }
 
 module "rds" {

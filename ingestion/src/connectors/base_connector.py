@@ -7,23 +7,22 @@ T = TypeVar("T")
 
 class BaseConnector(ABC, Generic[T]):
     """
-    Contrat commun à tous les connectors, tous domaines confondus.
-    fetch -> transform -> run (le point d'entrée appelé par l'orchestrateur d'ingestion).
+    Contrat commun à tous les connectors — version async.
+    fetch/transform restent la même séparation, mais fetch() est maintenant
+    une coroutine (I/O réseau), transform() reste synchrone (pur CPU, pas
+    besoin d'async pour du parsing/mapping en mémoire).
     """
 
-    connector_name: str  
+    connector_name: str
 
     @abstractmethod
-    def fetch(self, since: datetime, until: datetime) -> list[dict]:
-        """Récupère les données brutes depuis l'API tierce."""
+    async def fetch(self, since: datetime, until: datetime) -> list[dict]:
         raise NotImplementedError
 
     @abstractmethod
     def transform(self, raw_data: list[dict]) -> list[T]:
-        """Convertit les données brutes en instances de la dataclass de sortie du domaine."""
         raise NotImplementedError
 
-    def run(self, since: datetime, until: datetime) -> list[T]:
-        """Point d'entrée appelé par l'orchestrateur — identique pour tous les connectors."""
-        raw_data = self.fetch(since, until)
+    async def run(self, since: datetime, until: datetime) -> list[T]:
+        raw_data = await self.fetch(since, until)
         return self.transform(raw_data)

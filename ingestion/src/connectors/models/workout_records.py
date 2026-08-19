@@ -3,6 +3,23 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
+@dataclass(frozen=True)
+class ExerciseMetadataRecord:
+    """
+    Sortie standardisée pour le domaine "métadonnées d'exercice" — catalogue,
+    pas événementiel. Un ExerciseMetadataRecord = un exercice du catalogue
+    Lyfta, avec ses IDs de référence (equipment/body_part/muscles) déjà
+    parsés depuis les chaînes JSON-encodées de la réponse brute.
+    """
+ 
+    name: str
+    image_url: Optional[str] = None
+    equipment_ids: list[int] = field(default_factory=list)
+    body_part_ids: list[int] = field(default_factory=list)
+    target_muscle_ids: list[int] = field(default_factory=list)
+    synergist_muscle_ids: list[int] = field(default_factory=list)
+ 
+
 
 @dataclass(frozen=True)
 class WorkoutSetRecord:

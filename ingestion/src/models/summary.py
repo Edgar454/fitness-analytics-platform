@@ -5,7 +5,7 @@ from typing import Optional
 from datetime import date as date_, datetime
 from decimal import Decimal
 
-from sqlalchemy import Enum
+from sqlalchemy import Enum , DateTime
 from sqlalchemy.orm import mapped_column, Mapped
 
 
@@ -36,7 +36,7 @@ class WeeklySummary(FitnessBase):
     week_end: Mapped[date_]
     content: Mapped[Optional[str]]
     model_used: Mapped[Optional[str]]
-    generated_at: Mapped[datetime]
+    generated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     status: Mapped[SummaryStatus] = mapped_column(Enum(SummaryStatus))
 
     def __repr__(self) -> str:

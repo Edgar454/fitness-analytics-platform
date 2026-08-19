@@ -5,7 +5,7 @@ from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import ForeignKey, String, UniqueConstraint, Enum
+from sqlalchemy import ForeignKey, String, UniqueConstraint, Enum , DateTime
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
 
@@ -41,7 +41,7 @@ class BodyMeasurement(FitnessBase):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    measured_at: Mapped[datetime]
+    measured_at: Mapped[datetime]= mapped_column(DateTime(timezone=True))
     measure_type_id: Mapped[int] = mapped_column(ForeignKey("measure_type.id"))
     value: Mapped[Decimal]
     unit: Mapped[Optional[str]]
@@ -60,7 +60,7 @@ class ProgressPhoto(FitnessBase):
     view: Mapped[Optional[PhotoView]] = mapped_column(Enum(PhotoView))
     s3_key: Mapped[str]
     mime_type: Mapped[Optional[str]]
-    uploaded_at: Mapped[datetime]
+    uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     def __repr__(self) -> str:
         return f"ProgressPhoto<id={self.id!r}, view={self.view!r}, s3_key={self.s3_key!r}>"

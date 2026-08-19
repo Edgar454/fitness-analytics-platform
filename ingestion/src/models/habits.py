@@ -3,7 +3,7 @@ from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey , DateTime
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
 
@@ -26,7 +26,7 @@ class HabitLog(FitnessBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     habit_id: Mapped[int] = mapped_column(ForeignKey("habits.id"))
-    date: Mapped[datetime]
+    date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     value: Mapped[Optional[Decimal]]
     completed: Mapped[Optional[bool]]
 

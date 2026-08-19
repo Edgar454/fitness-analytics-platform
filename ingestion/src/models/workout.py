@@ -3,8 +3,10 @@ from typing import Optional , List
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import ForeignKey,String
-from sqlalchemy.orm import mapped_column,relationship,Mapped
+from sqlalchemy import ForeignKey,String, UniqueConstraint , ARRAY, Integer , DateTime
+from sqlalchemy.orm import mapped_column,relationship,Mapped 
+
+
 
 
 class Exercise(FitnessBase):
@@ -13,23 +15,35 @@ class Exercise(FitnessBase):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     category: Mapped[Optional[str]]
-    muscle_group: Mapped[Optional[str]]
-    equipment: Mapped[Optional[str]]
-    is_compound: Mapped[Optional[bool]]
+    image_url: Mapped[Optional[str]]
+
+    # Arrays plutôt que many-to-many complet : un exercice composé (compound)
+    # peut légitimement toucher plusieurs body parts/muscles à la fois — ce
+    # n'est pas une anomalie de données Lyfta. Pas de vraie contrainte FK
+    # possible élément par élément sur un array Postgres ; l'intégrité
+    # référentielle vers equipment/body_part/muscle est assumée applicative,
+    # pas enforced par la DB — compromis accepté pour rester simple.
+    equipment_ids: Mapped[Optional[List[int]]] = mapped_column(ARRAY(Integer))
+    body_part_ids: Mapped[Optional[List[int]]] = mapped_column(ARRAY(Integer))
+    target_muscle_ids: Mapped[Optional[List[int]]] = mapped_column(ARRAY(Integer))
+    synergist_muscle_ids: Mapped[Optional[List[int]]] = mapped_column(ARRAY(Integer ))
 
     sets: Mapped[List["WorkoutSet"]] = relationship(back_populates="exercise")
 
     def __repr__(self) -> str:
-        return f"Exercise<id={self.id!r} , name={self.name!r},muscle_group={self.muscle_group!r}>"
+        return f"Exercise<id={self.id!r}, name={self.name!r}>"
 
 
 class WorkoutSession(FitnessBase):
     __tablename__ = "workout_session"
+    __table_args__ = (
+        UniqueConstraint("started_at", name="uq_workout_session_started_at"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     date: Mapped[datetime]
-    started_at: Mapped[datetime]
-    ended_at: Mapped[Optional[datetime]]
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    ended_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     duration: Mapped[Optional[int]]
     sources: Mapped[Optional[str]]
     notes: Mapped[Optional[str]]
@@ -41,6 +55,9 @@ class WorkoutSession(FitnessBase):
 
 class WorkoutSet(FitnessBase):
     __tablename__ = "workout_set"
+    __table_args__ = (
+        UniqueConstraint("session_id", "exercise_id", "set_number", name="uq_workout_set_session_exercise_number"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     session_id: Mapped[int] = mapped_column(ForeignKey("workout_session.id"))
@@ -61,6 +78,9 @@ class WorkoutSet(FitnessBase):
 
 class WorkoutPr(FitnessBase):
     __tablename__ = "workout_pr"
+    __table_args__ = (
+        UniqueConstraint("session_id", "exercise_id", "metric", name="uq_workout_pr_session_exercise_metric"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key= True)
     session_id: Mapped[int] = mapped_column(ForeignKey("workout_session.id"))

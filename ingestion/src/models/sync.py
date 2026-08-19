@@ -4,7 +4,7 @@ from .base import FitnessBase
 from typing import Optional
 from datetime import datetime
 
-from sqlalchemy import Enum
+from sqlalchemy import Enum , DateTime
 from sqlalchemy.orm import mapped_column, Mapped
 
 
@@ -24,8 +24,8 @@ class SyncHistory(FitnessBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     connector: Mapped[str]
-    started_at: Mapped[datetime]
-    ended_at: Mapped[Optional[datetime]]
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    ended_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     status: Mapped[SyncStatus] = mapped_column(Enum(SyncStatus))
     records_processed: Mapped[Optional[int]]
     error: Mapped[Optional[str]]

@@ -1,27 +1,27 @@
-"""
-Test manuel de /api/v1/exercises/progress, pour voir si les PRs y sont
-documentés plus proprement que l'heuristique record_type is not None
-sur /api/v1/workouts.
-"""
-
+from datetime import datetime
 import os
-import requests
-import json
-from dotenv import load_dotenv
 
-load_dotenv()
+from src.config import Config
+from src.database import RDSConnector
 
-API_KEY = os.environ["LYFTA_API_KEY"]
-BASE_URL = "https://my.lyfta.app"
+from src.connectors.lyfta.auth import LyftaAuthConnector
+from src.connectors.lyfta.exercise_metadata import LyftaExerciseMetadataConnector
+from src.loaders.workout import load_exercise_metadata
+ 
+db_connector = RDSConnector(Config.SQLALCHEMY_DATABASE_URI)
 
-headers = {"Authorization": f"Bearer {API_KEY}"}
+auth = LyftaAuthConnector(api_key=os.environ["LYFTA_API_KEY"])
+connector = LyftaExerciseMetadataConnector(auth=auth)
 
-print("=== /api/v1/exercises/progress ===")
-response = requests.get(f"{BASE_URL}/api/v1/exercises/progress", headers=headers, params={"limit": 10})
-print(f"Status: {response.status_code}")
-print(json.dumps(response.json(), indent=2, ensure_ascii=False))
+# since/until ignorés par ce connector, mais requis par la signature du contrat
+now = datetime.utcnow()
+records = connector.run(now, now)
+print(f"Exercise metadata records fetched: {len(records)}")
 
-print("\n=== /api/v1/exercises/library (échantillon) ===")
-response = requests.get(f"{BASE_URL}/api/v1/exercises/library", headers=headers, params={"limit": 5})
-print(f"Status: {response.status_code}")
-print(json.dumps(response.json(), indent=2, ensure_ascii=False))
+if records:
+    print("\nSample record:")
+    print(records[0])
+
+with db_connector.session() as db:
+    updated = load_exercise_metadata(db, records)
+    print(f"\nExercises updated: {updated}")

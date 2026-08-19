@@ -7,21 +7,18 @@ from typing import Optional
 @dataclass(frozen=True)
 class NeatRecord:
     """
-    Sortie standardisée attendue de tout connector du domaine NEAT
-    (activité non structurée : steps, sommeil, calories brûlées au quotidien).
-
-    Modèle field-value plutôt qu'une ligne large par jour : chaque métrique
-    est récupérée indépendamment via son propre appel dailyRollUp (structure
-    de retour différente par type : StepsRollupValue, TotalCaloriesRollupValue,
-    etc.), donc les combiner en une seule ligne par jour dans le connector
-    forcerait une reconciliation entre types hétérogènes — source d'erreur si
-    un type est absent/en retard un jour donné. On repousse cette reconciliation
-    à la couche de présentation (dbt, pivot), où elle peut être faite une fois,
-    correctement, sur des données déjà persistées.
+    Sortie standardisée attendue de tout connector du domaine NEAT.
+    Une instance = un jour agrégé, cohérent avec le contrat large des autres
+    domaines (nutrition, etc.). Le pivot field-value -> large (nécessaire pour
+    Google Health, qui fetch chaque métrique séparément via dailyRollUp) est
+    interne au connector, pas exposé à l'appelant.
     """
 
     date: date_
-    metric_name: str  # ex: "steps", "sleep_minutes", "active_minutes", "calories_burned"
-    value: Decimal
-    unit: Optional[str] = None
+    steps: Optional[int] = None
+    active_minutes: Optional[int] = None
+    distance: Optional[Decimal] = None
+    calories_burned: Optional[Decimal] = None
+    sleep_minutes: Optional[int] = None
+    resting_hr: Optional[int] = None
     source: Optional[str] = None

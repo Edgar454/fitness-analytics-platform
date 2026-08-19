@@ -1,41 +1,63 @@
 from abc import ABC, abstractmethod
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+
+
+from abc import ABC, abstractmethod
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
+from sqlalchemy.ext.asyncio import (
+    create_async_engine,
+    async_sessionmaker,
+    AsyncSession,
+)
 
 
 class DatabaseConnector(ABC):
-    """
-    Contrat minimal pour toute implémentation de base de données —
-    RDS aujourd'hui, Supabase demain, même interface.
-    """
 
     @abstractmethod
     def get_engine(self):
         raise NotImplementedError
 
-    @contextmanager
-    def session(self) -> Session:
-        """Fournit une session SQLAlchemy avec commit/rollback automatique."""
-        SessionLocal = sessionmaker(bind=self.get_engine())
+    @asynccontextmanager
+    async def session(self) -> AsyncIterator[AsyncSession]:
+        SessionLocal = async_sessionmaker(
+            bind=self.get_engine(),
+            expire_on_commit=False,
+        )
+
         db = SessionLocal()
+
         try:
             yield db
-            db.commit()
+            await db.commit()
+
         except Exception:
-            db.rollback()
+            await db.rollback()
             raise
+
         finally:
-            db.close()
+            await db.close()
 
 
 class RDSConnector(DatabaseConnector):
-    def __init__(self, database_url: str):
+    """
+    ATTENTION : le driver change de psycopg2 (sync) à asyncpg (async).
+    La connection string ET la gestion SSL doivent être adaptées :
+      - schéma : postgresql+asyncpg:// (pas postgresql+psycopg2://)
+      - asyncpg n'accepte pas sslmode/sslrootcert en query string comme
+        psycopg2 — il faut passer un objet ssl.SSLContext via connect_args.
+    Voir Config pour la construction de l'URL et du contexte SSL adaptés.
+    """
+
+    def __init__(self, database_url: str, connect_args: dict | None = None):
         self._database_url = database_url
+        self._connect_args = connect_args or {}
         self._engine = None
 
     def get_engine(self):
         if self._engine is None:
-            self._engine = create_engine(self._database_url)
+            self._engine = create_async_engine(self._database_url, connect_args=self._connect_args)
         return self._engine
