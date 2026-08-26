@@ -7,6 +7,7 @@ from typing import Optional
 from src.connectors.google_health.auth import GoogleAuthConnector
 from src.connectors.base_connector import BaseConnector
 from src.connectors.models.body_measurement_record import BodyMeasurementRecord
+from src.rate_limiter.redis_admission import RedisAdmissionController
 
 
 
@@ -46,8 +47,9 @@ class GoogleHealthBodyMeasurementConnector(BaseConnector[BodyMeasurementRecord])
 
     connector_name = "google_health"
 
-    def __init__(self, auth: GoogleAuthConnector):
+    def __init__(self, auth: GoogleAuthConnector ,admission: RedisAdmissionController):
         self._auth = auth
+        self._admission = admission
 
     async def fetch(self, since: datetime, until: datetime) -> list[dict]:
         async with httpx.AsyncClient() as client:
@@ -79,14 +81,15 @@ class GoogleHealthBodyMeasurementConnector(BaseConnector[BodyMeasurementRecord])
             if page_token:
                 params["pageToken"] = page_token
 
-            response = await client.get(
-                f"{API_BASE}/{data_type}/dataPoints",
-                headers=headers,
-                params=params,
-                timeout=15,
-            )
-            response.raise_for_status()
-            payload = response.json()
+            async with self._admission.acquire():
+                response = await client.get(
+                    f"{API_BASE}/{data_type}/dataPoints",
+                    headers=headers,
+                    params=params,
+                    timeout=15,
+                )
+                response.raise_for_status()
+                payload = response.json()
 
             for point in payload.get("dataPoints", []):
                 point["_data_type"] = data_type

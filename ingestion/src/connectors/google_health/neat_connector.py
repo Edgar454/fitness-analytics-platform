@@ -7,6 +7,7 @@ import httpx
 from src.connectors.google_health.auth import GoogleAuthConnector
 from src.connectors.base_connector import BaseConnector
 from src.connectors.models.neat_record import NeatRecord
+from src.rate_limiter.redis_admission import RedisAdmissionController
 
 API_BASE = "https://health.googleapis.com/v4/users/me/dataTypes"
 DATA_SOURCE_FAMILY = "google-sources"
@@ -52,8 +53,9 @@ class GoogleHealthNeatConnector(BaseConnector[NeatRecord]):
 
     connector_name = "google_health"
 
-    def __init__(self, auth: GoogleAuthConnector):
+    def __init__(self, auth: GoogleAuthConnector, admission: RedisAdmissionController):
         self._auth = auth
+        self._admission = admission
 
     async def fetch(self, since: datetime, until: datetime) -> list[dict]:
         async with httpx.AsyncClient() as client:
@@ -86,15 +88,16 @@ class GoogleHealthNeatConnector(BaseConnector[NeatRecord]):
         while True:
             if page_token:
                 body["pageToken"] = page_token
-
-            response = await client.post(
-                f"{API_BASE}/{data_type}/dataPoints:dailyRollUp",
-                headers=headers,
-                json=body,
-                timeout=15,
-            )
-            response.raise_for_status()
-            payload = response.json()
+                
+            async with self._admission.acquire() :
+                    response = await client.post(
+                        f"{API_BASE}/{data_type}/dataPoints:dailyRollUp",
+                        headers=headers,
+                        json=body,
+                        timeout=15,
+                    )
+                    response.raise_for_status()
+                    payload = response.json()
 
             for point in payload.get("rollupDataPoints", []):
                 point["_data_type"] = data_type

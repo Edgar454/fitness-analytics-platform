@@ -25,6 +25,7 @@ class HabitLog(FitnessBase):
     __tablename__ = "habit_log"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     habit_id: Mapped[int] = mapped_column(ForeignKey("habits.id"))
     date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     value: Mapped[Optional[Decimal]]

@@ -1,4 +1,5 @@
 from .base import FitnessBase
+from .user import User ,UserCredential
 from .workout import Exercise, WorkoutSession, WorkoutSet, WorkoutPr
 from .body import MeasureType, BodyMeasurement, ProgressPhoto
 from .daily_telemetry import DailyHealth, DailyNutrition

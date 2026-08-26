@@ -6,6 +6,7 @@ import httpx
 from src.connectors.lyfta.auth import LyftaAuthConnector
 from src.connectors.base_connector import BaseConnector
 from src.connectors.models.workout_records import WorkoutSessionRecord, WorkoutSetRecord, WorkoutPrRecord
+from src.rate_limiter.redis_admission import RedisAdmissionController
 
 
 
@@ -52,8 +53,9 @@ class LyftaWorkoutConnector(BaseConnector[WorkoutSessionRecord]):
 
     connector_name = "lyfta"
 
-    def __init__(self, auth: LyftaAuthConnector):
+    def __init__(self, auth: LyftaAuthConnector , admission: RedisAdmissionController):
         self._auth = auth
+        self._admission = admission
 
     async def fetch(self, since: datetime, until: datetime) -> list[dict]:
         workouts: list[dict] = []
@@ -61,14 +63,15 @@ class LyftaWorkoutConnector(BaseConnector[WorkoutSessionRecord]):
 
         async with httpx.AsyncClient() as client:
             while True:
-                response = await client.get(
-                    f"{BASE_URL}/api/v1/workouts",
-                    headers=self._auth.headers,
-                    params={"limit": 100, "page": page},
+                async with self._admission.acquire():
+                    response = await client.get(
+                        f"{BASE_URL}/api/v1/workouts",
+                        headers=self._auth.headers,
+                        params={"limit": 100, "page": page},
                     timeout=15,
-                )
-                response.raise_for_status()
-                payload = response.json()
+                    )
+                    response.raise_for_status()
+                    payload = response.json()
 
                 page_workouts = payload.get("workouts", [])
                 if not page_workouts:

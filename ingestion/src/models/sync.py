@@ -4,7 +4,7 @@ from .base import FitnessBase
 from typing import Optional
 from datetime import datetime
 
-from sqlalchemy import Enum , DateTime
+from sqlalchemy import Enum , DateTime , ForeignKey, UniqueConstraint, UniqueConstraint
 from sqlalchemy.orm import mapped_column, Mapped
 
 
@@ -21,8 +21,10 @@ class TriggerType(enum.Enum):
 
 class SyncHistory(FitnessBase):
     __tablename__ = "sync_history"
+    __table_args__ = (UniqueConstraint("user_id", "started_at", name="uq_sync_history_user_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     connector: Mapped[str]
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     ended_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))

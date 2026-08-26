@@ -37,10 +37,11 @@ class MeasureType(FitnessBase):
 class BodyMeasurement(FitnessBase):
     __tablename__ = "body_measurement"
     __table_args__ = (
-        UniqueConstraint("measured_at", "measure_type_id", name="uq_body_measurement_time_type"),
+        UniqueConstraint("user_id", "measured_at", "measure_type_id", name="uq_body_measurement_user_time_type"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     measured_at: Mapped[datetime]= mapped_column(DateTime(timezone=True))
     measure_type_id: Mapped[int] = mapped_column(ForeignKey("measure_type.id"))
     value: Mapped[Decimal]
@@ -57,6 +58,7 @@ class ProgressPhoto(FitnessBase):
     __tablename__ = "progress_photos"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     view: Mapped[Optional[PhotoView]] = mapped_column(Enum(PhotoView))
     s3_key: Mapped[str]
     mime_type: Mapped[Optional[str]]

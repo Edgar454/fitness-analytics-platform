@@ -3,13 +3,16 @@ from typing import Optional
 from datetime import date as date_
 from decimal import Decimal
 
+from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import mapped_column, Mapped
 
 
 class DailyHealth(FitnessBase):
     __tablename__ = "daily_health"
+    __table_args__ = (UniqueConstraint("user_id", "date", name="uq_daily_health_user_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     date: Mapped[date_] = mapped_column(unique=True)
     steps: Mapped[Optional[int]]
     active_minutes: Mapped[Optional[int]]
@@ -25,8 +28,10 @@ class DailyHealth(FitnessBase):
 
 class DailyNutrition(FitnessBase):
     __tablename__ = "daily_nutrition"
+    _table_args__ = (UniqueConstraint("user_id", "date", name="uq_daily_nutrition_user_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     date: Mapped[date_] = mapped_column(unique=True)
     calories: Mapped[Optional[Decimal]]
     protein: Mapped[Optional[Decimal]]

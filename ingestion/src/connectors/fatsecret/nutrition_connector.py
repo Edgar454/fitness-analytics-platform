@@ -6,6 +6,7 @@ from decimal import Decimal
 from src.connectors.base_connector import BaseConnector
 from src.connectors.models.nutrition_record import NutritionRecord
 from src.connectors.fatsecret.auth import FatSecretAuthConnector
+from src.rate_limiter.redis_admission import RedisAdmissionController
 
 
 
@@ -20,8 +21,9 @@ class FatSecretNutritionConnector(BaseConnector[NutritionRecord]):
 
     connector_name = "fatsecret"
 
-    def __init__(self, auth: FatSecretAuthConnector):
+    def __init__(self, auth: FatSecretAuthConnector, admission_controller: RedisAdmissionController):
         self._auth = auth
+        self._admission = admission_controller
 
     async def fetch(
         self,
@@ -52,10 +54,11 @@ class FatSecretNutritionConnector(BaseConnector[NutritionRecord]):
         return raw_entries
 
     async def _fetch_day(self, day: date):
-        return await asyncio.to_thread(
-            self._auth.client.diary.entries_get_v2,
-            date=day,
-        )
+        async with self._admission.acquire() :
+            return await asyncio.to_thread(
+                self._auth.client.diary.entries_get_v2,
+                date=day,
+            )
 
     def transform(self, raw_data: list[dict]) -> list[NutritionRecord]:
         daily: dict[date, dict[str, Decimal]] = defaultdict(

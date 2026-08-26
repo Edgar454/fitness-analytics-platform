@@ -36,11 +36,11 @@ class Exercise(FitnessBase):
 
 class WorkoutSession(FitnessBase):
     __tablename__ = "workout_session"
-    __table_args__ = (
-        UniqueConstraint("started_at", name="uq_workout_session_started_at"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "started_at", name="uq_workout_session_user_started_at"),)
+
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     date: Mapped[datetime]
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     ended_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
