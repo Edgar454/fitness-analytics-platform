@@ -2,7 +2,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.connectors.models.body_measurement_record import BodyMeasurementRecord
-from src.models.body import BodyMeasurement, MeasureCategory
+from ingestion.src.models.fitness.body import BodyMeasurement, MeasureCategory
 from src.loaders.references import get_or_create_measure_type
 
 

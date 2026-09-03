@@ -1,4 +1,4 @@
 from sqlalchemy.orm import DeclarativeBase
 
-class FitnessBase(DeclarativeBase):
+class Base(DeclarativeBase):
     pass

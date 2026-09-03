@@ -1,4 +1,4 @@
-from .base import FitnessBase
+from src.models.base import Base
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
@@ -7,8 +7,9 @@ from sqlalchemy import ForeignKey , DateTime
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
 
-class Habit(FitnessBase):
+class Habit(Base):
     __tablename__ = "habits"
+    __table_args__ = {"schema": "fitness"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
@@ -21,8 +22,9 @@ class Habit(FitnessBase):
         return f"Habit<id={self.id!r}, name={self.name!r}>"
 
 
-class HabitLog(FitnessBase):
+class HabitLog(Base):
     __tablename__ = "habit_log"
+    __table_args__ = {"schema": "fitness"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))

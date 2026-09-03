@@ -2,11 +2,13 @@ from logging.config import fileConfig
 import asyncio
 
 from alembic import context
-from sqlalchemy import pool
+from sqlalchemy import pool , MetaData
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.config import Config
-from src.models.base import FitnessBase
+from src.models.base import Base
+
+
 
 # Alembic Config object
 config = context.config
@@ -21,7 +23,8 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Metadata used by autogenerate
-target_metadata = FitnessBase.metadata
+target_metadata = Base.metadata
+
 
 
 def run_migrations_offline() -> None:
@@ -33,6 +36,7 @@ def run_migrations_offline() -> None:
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
+        include_schemas=True,
         dialect_opts={
             "paramstyle": "named",
         },
@@ -46,6 +50,7 @@ def do_run_migrations(connection) -> None:
     context.configure(
         connection=connection,
         target_metadata=target_metadata,
+        include_schemas=True,
     )
 
     with context.begin_transaction():

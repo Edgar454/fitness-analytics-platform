@@ -1,6 +1,6 @@
 import enum
 
-from .base import FitnessBase
+from src.models.base import Base
 from typing import Optional
 from datetime import date as date_, datetime
 from decimal import Decimal
@@ -14,12 +14,12 @@ class SummaryStatus(enum.Enum):
     FAILED = "failed"
 
 
-class DailySummary(FitnessBase):
+class DailySummary(Base):
     __tablename__ = "daily_summary"
-    __table_args__ = (UniqueConstraint("user_id", "date", name="uq_daily_summary_user_date"),)
+    __table_args__ = (UniqueConstraint("user_id", "date", name="uq_daily_summary_user_date"), {"schema": "fitness"})
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("fitness.users.id"))
     date: Mapped[date_] = mapped_column(unique=True)
     health_score: Mapped[Optional[Decimal]]
     training_load: Mapped[Optional[Decimal]]
@@ -30,12 +30,12 @@ class DailySummary(FitnessBase):
         return f"DailySummary<id={self.id!r}, date={self.date!r}, health_score={self.health_score!r}>"
 
 
-class WeeklySummary(FitnessBase):
+class WeeklySummary(Base):
     __tablename__ = "weekly_summary"
-    __table_args__ = (UniqueConstraint("user_id", "week_start", name="uq_weekly_summary_user_week_start"),)
+    __table_args__ = (UniqueConstraint("user_id", "week_start", name="uq_weekly_summary_user_week_start"), {"schema": "fitness"})
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("fitness.users.id"))
     week_start: Mapped[date_] = mapped_column(unique=True)
     week_end: Mapped[date_]
     content: Mapped[Optional[str]]

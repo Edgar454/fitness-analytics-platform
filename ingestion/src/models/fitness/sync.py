@@ -1,6 +1,6 @@
 import enum
 
-from .base import FitnessBase
+from src.models.base import Base
 from typing import Optional
 from datetime import datetime
 
@@ -19,12 +19,13 @@ class TriggerType(enum.Enum):
     MANUAL = "manual"
 
 
-class SyncHistory(FitnessBase):
+class SyncHistory(Base):
     __tablename__ = "sync_history"
-    __table_args__ = (UniqueConstraint("user_id", "started_at", name="uq_sync_history_user_date"),)
+    __table_args__ = (UniqueConstraint("user_id", "started_at", name="uq_sync_history_user_date"),
+                      {"schema": "fitness"})
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("fitness.users.id"))
     connector: Mapped[str]
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     ended_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))

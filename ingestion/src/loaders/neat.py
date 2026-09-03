@@ -2,7 +2,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.connectors.models.neat_record import NeatRecord
-from src.models.daily_telemetry import DailyHealth
+from ingestion.src.models.fitness.daily_telemetry import DailyHealth
 
 
 async def load_neat(db: AsyncSession, records: list[NeatRecord]) -> int:

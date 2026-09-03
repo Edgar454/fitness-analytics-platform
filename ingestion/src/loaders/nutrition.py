@@ -2,7 +2,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.connectors.models.nutrition_record import NutritionRecord
-from src.models.daily_telemetry import DailyNutrition
+from ingestion.src.models.fitness.daily_telemetry import DailyNutrition
 
 
 async def load_nutrition(db: AsyncSession, records: list[NutritionRecord]) -> int:

@@ -5,7 +5,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel
 from .common import ListResponse
-from ingestion.src.models.summary import SummaryStatus
+from ingestion.src.models.fitness.summary import SummaryStatus
 
 class DailySummaryQuery(BaseModel):
     start_date: date | None = None

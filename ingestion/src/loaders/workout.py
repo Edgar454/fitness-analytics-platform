@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.connectors.models.workout_records import WorkoutSessionRecord
-from src.models.workout import WorkoutSession, WorkoutSet, WorkoutPr
+from ingestion.src.models.fitness.workout import WorkoutSession, WorkoutSet, WorkoutPr
 from src.loaders.references import get_or_create_exercise
 
 

@@ -10,7 +10,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from src.config import Config
 from src.database import RDSConnector
-from src.models.reference import Equipment, BodyPart, Muscle
+from ingestion.src.models.fitness.reference import Equipment, BodyPart, Muscle
 from src.connectors.lyfta.mappings import EQUIPMENT_BY_ID, BODY_PART_BY_ID, MUSCLE_BY_ID
 
 db_connector = RDSConnector(Config.SQLALCHEMY_DATABASE_URI)

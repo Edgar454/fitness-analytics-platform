@@ -1,5 +1,5 @@
 import enum
-from .base import FitnessBase
+from src.models.base import Base
 from typing import Optional
 from datetime import datetime
 
@@ -13,8 +13,9 @@ class Provider(str, enum.Enum):
     LYFTA = "lyfta"
 
 
-class User(FitnessBase):
+class User(Base):
     __tablename__ = "users"
+    __table_args__ = {"schema": "fitness"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(unique=True)
@@ -25,14 +26,15 @@ class User(FitnessBase):
         return f"User<id={self.id!r}, email={self.email!r}>"
 
 
-class UserCredential(FitnessBase):
+class UserCredential(Base):
     __tablename__ = "user_credentials"
     __table_args__ = (
         UniqueConstraint("user_id", "provider", name="uq_user_credentials_user_provider"),
+        {"schema": "fitness"}
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("fitness.users.id"))
     provider: Mapped[Provider] = mapped_column(Enum(Provider))
     encrypted_payload: Mapped[bytes] = mapped_column(LargeBinary)  # JSON chiffré (KMS), contenu variable par provider
     active: Mapped[bool] = mapped_column(default=True)

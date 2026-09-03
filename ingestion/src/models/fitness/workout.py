@@ -1,4 +1,4 @@
-from .base import FitnessBase
+from src.models.base import Base
 from typing import Optional , List
 from datetime import datetime
 from decimal import Decimal
@@ -9,8 +9,9 @@ from sqlalchemy.orm import mapped_column,relationship,Mapped
 
 
 
-class Exercise(FitnessBase):
+class Exercise(Base):
     __tablename__ = "exercise"
+    __table_args__ = {"schema": "fitness"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
@@ -34,13 +35,13 @@ class Exercise(FitnessBase):
         return f"Exercise<id={self.id!r}, name={self.name!r}>"
 
 
-class WorkoutSession(FitnessBase):
+class WorkoutSession(Base):
     __tablename__ = "workout_session"
-    __table_args__ = (UniqueConstraint("user_id", "started_at", name="uq_workout_session_user_started_at"),)
+    __table_args__ = (UniqueConstraint("user_id", "started_at", name="uq_workout_session_user_started_at"), {"schema": "fitness"},)
 
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("fitness.users.id"))
     date: Mapped[datetime]
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     ended_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
@@ -53,15 +54,16 @@ class WorkoutSession(FitnessBase):
     def __repr__(self) -> str:
         return f"Session<id={self.id !r} , date={self.date !r}, duration={self.duration !r}>"
 
-class WorkoutSet(FitnessBase):
+class WorkoutSet(Base):
     __tablename__ = "workout_set"
     __table_args__ = (
         UniqueConstraint("session_id", "exercise_id", "set_number", name="uq_workout_set_session_exercise_number"),
+        {"schema": "fitness"},
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    session_id: Mapped[int] = mapped_column(ForeignKey("workout_session.id"))
-    exercise_id: Mapped[int] = mapped_column(ForeignKey("exercise.id"))
+    session_id: Mapped[int] = mapped_column(ForeignKey("fitness.workout_session.id"))
+    exercise_id: Mapped[int] = mapped_column(ForeignKey("fitness.exercise.id"))
     set_number: Mapped[int]
     reps: Mapped[Optional[int]]
     is_warmup: Mapped[Optional[bool]]
@@ -76,15 +78,16 @@ class WorkoutSet(FitnessBase):
     def __repr__(self):
         return f"WorkoutSet<session_id= {self.session_id!r} ,id={self.id!r}, set_number={self.set_number!r},weight={self.weight!r}>"
 
-class WorkoutPr(FitnessBase):
+class WorkoutPr(Base):
     __tablename__ = "workout_pr"
     __table_args__ = (
         UniqueConstraint("session_id", "exercise_id", "metric", name="uq_workout_pr_session_exercise_metric"),
+        {"schema": "fitness"},
     )
 
     id: Mapped[int] = mapped_column(primary_key= True)
-    session_id: Mapped[int] = mapped_column(ForeignKey("workout_session.id"))
-    exercise_id: Mapped[int] = mapped_column(ForeignKey("exercise.id"))
+    session_id: Mapped[int] = mapped_column(ForeignKey("fitness.workout_session.id"))
+    exercise_id: Mapped[int] = mapped_column(ForeignKey("fitness.exercise.id"))
     metric: Mapped[str]
     value: Mapped[Decimal]
     achieved_at: Mapped[datetime]

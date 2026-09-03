@@ -40,7 +40,7 @@ module "network" {
   tags                = local.common_tags
   vpc_id              = data.aws_vpc.default.id
   subnet_ids          = data.aws_subnets.default.ids
-  allowed_cidr_blocks = ["105.188.69.52/32"]
+  allowed_cidr_blocks = ["196.115.30.233/32"]
 }
 
 module "rds" {
@@ -49,4 +49,14 @@ module "rds" {
   db_password         = module.secrets.db_password
   subnet_group_name   = module.network.subnet_group_name
   security_group_ids  = module.network.security_group_ids
+}
+
+module "sqs" {
+  source = "./sqs"
+  tags   = local.common_tags
+}
+
+module "kms" {
+  source = "./kms"
+  tags   = local.common_tags
 }

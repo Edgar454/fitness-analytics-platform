@@ -1,6 +1,6 @@
 import enum
 
-from .base import FitnessBase
+from src.models.base import Base
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
@@ -20,8 +20,9 @@ class PhotoView(enum.Enum):
     BACK = "back"
 
 
-class MeasureType(FitnessBase):
+class MeasureType(Base):
     __tablename__ = "measure_type"
+    __table_args__ = {"schema": "fitness"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50), unique=True)
@@ -34,16 +35,17 @@ class MeasureType(FitnessBase):
         return f"MeasureType<id={self.id!r}, name={self.name!r}, category={self.category!r}>"
 
 
-class BodyMeasurement(FitnessBase):
+class BodyMeasurement(Base):
     __tablename__ = "body_measurement"
     __table_args__ = (
         UniqueConstraint("user_id", "measured_at", "measure_type_id", name="uq_body_measurement_user_time_type"),
+        {"schema": "fitness"}
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("fitness.users.id"))
     measured_at: Mapped[datetime]= mapped_column(DateTime(timezone=True))
-    measure_type_id: Mapped[int] = mapped_column(ForeignKey("measure_type.id"))
+    measure_type_id: Mapped[int] = mapped_column(ForeignKey("fitness.measure_type.id"))
     value: Mapped[Decimal]
     unit: Mapped[Optional[str]]
     source: Mapped[Optional[str]]
@@ -54,11 +56,12 @@ class BodyMeasurement(FitnessBase):
         return f"BodyMeasurement<id={self.id!r}, measure_type_id={self.measure_type_id!r}, value={self.value!r}>"
 
 
-class ProgressPhoto(FitnessBase):
+class ProgressPhoto(Base):
     __tablename__ = "progress_photos"
+    __table_args__ = {"schema": "fitness"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("fitness.users.id"))
     view: Mapped[Optional[PhotoView]] = mapped_column(Enum(PhotoView))
     s3_key: Mapped[str]
     mime_type: Mapped[Optional[str]]

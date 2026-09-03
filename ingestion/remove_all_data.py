@@ -9,6 +9,19 @@ db_connector = RDSConnector(
     connect_args=Config.get_ssl_connect_args(),
 )
 
+async def list_all_tables_in_db(db_connector: RDSConnector):
+    async with db_connector.session() as db:
+        result = await db.execute(
+            text("""
+                SELECT schemaname, tablename
+                FROM pg_tables
+                WHERE schemaname NOT IN ('pg_catalog', 'information_schema')
+                ORDER BY schemaname, tablename;
+            """)
+        )
+
+        tables = result.fetchall()
+        return tables
 
 async def remove_all_data_in_db(db_connector: RDSConnector):
     async with db_connector.session() as db:
@@ -38,5 +51,7 @@ async def remove_all_data_in_db(db_connector: RDSConnector):
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(remove_all_data_in_db(db_connector))
+    tables  = asyncio.run(list_all_tables_in_db(db_connector))
+    print(f"Tables in the database: {tables}")
+
     print("All data removed from the database.")

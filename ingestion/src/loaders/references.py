@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.workout import Exercise
-from src.models.body import MeasureType, MeasureCategory
+from ingestion.src.models.fitness.workout import Exercise
+from ingestion.src.models.fitness.body import MeasureType, MeasureCategory
 
 
 async def get_or_create_exercise(db: AsyncSession, name: str) -> Exercise:

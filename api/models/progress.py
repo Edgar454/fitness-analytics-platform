@@ -4,7 +4,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from ingestion.src.models.body import PhotoView
+from ingestion.src.models.fitness.body import PhotoView
 from .common import ListResponse
 
 class ProgressPhotoQuery(BaseModel):

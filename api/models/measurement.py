@@ -3,7 +3,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from pydantic import BaseModel
 from .common import ListResponse
-from ingestion.src.models.body import MeasureCategory
+from ingestion.src.models.fitness.body import MeasureCategory
 
 class MeasurementQuery(BaseModel):
     start_date: date | None = None

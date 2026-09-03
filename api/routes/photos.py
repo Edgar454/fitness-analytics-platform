@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, File, Form, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ingestion.src.db import get_session
-from ingestion.src.models.body import PhotoView
+from ingestion.src.models.fitness.body import PhotoView
 from api.models.progress import ProgressPhotoResponse
 from api.services.photo_service import PhotoService
 
