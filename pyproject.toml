@@ -8,6 +8,7 @@ dependencies = [
     "alembic>=1.18.5",
     "asyncpg>=0.31.0",
     "boto3>=1.43.87",
+    "fastapi>=0.141.1",
     "fatsecret>=4.0.10",
     "httpx>=0.28.1",
     "psycopg2>=2.9.12",

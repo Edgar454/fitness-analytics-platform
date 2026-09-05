@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from src.config import Config
 
 
 from abc import ABC, abstractmethod
@@ -61,3 +63,14 @@ class RDSConnector(DatabaseConnector):
         if self._engine is None:
             self._engine = create_async_engine(self._database_url, connect_args=self._connect_args)
         return self._engine
+
+
+
+db_connector = RDSConnector(
+    Config.SQLALCHEMY_DATABASE_URI,
+    connect_args=Config.get_ssl_connect_args(),
+)
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with db_connector.session() as db:
+        yield db
