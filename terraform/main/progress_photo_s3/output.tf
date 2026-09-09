@@ -1,3 +1,3 @@
 output "bucket_name" {
-    value = aws_s3_bucket.terraform_state.bucket
+    value = aws_s3_bucket.progress_photos.bucket
 }
