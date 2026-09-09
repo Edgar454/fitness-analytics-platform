@@ -143,7 +143,8 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "kms:GetKeyPolicy",
           "kms:ListKeyPolicies",
           "kms:TagResource",
-          "kms:UntagResource"
+          "kms:UntagResource",
+          "kms:ListResourceTags",
         ]
         Resource = "*"
       },
@@ -199,6 +200,12 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "sns:UntagResource",
           "sns:ListTags",
           "sns:ListTagsForResource",
+          "sns:GetSubscriptionAttributes",
+
+          "sns:CreateSubscription",
+          "sns:DeleteSubscription",
+          "sns:GetSubscriptionAttributes",
+          "sns:SetSubscriptionAttributes"
         ]
         Resource = "*"
       },
@@ -278,7 +285,22 @@ resource "aws_iam_policy" "terraform_bootstrap" {
         Resource = "*"
       },
 
+      # ============================================================
+      # AWS Budgets
+      # ============================================================
 
+      {
+        Sid    = "BudgetsLifecycle"
+        Effect = "Allow"
+        Action = [
+          "budgets:ViewBudget",
+          "budgets:CreateBudget",
+          "budgets:ModifyBudget",
+          "budgets:DeleteBudget",
+          "budgets:DescribeBudget"
+        ]
+        Resource = "*"
+      },
 
       # ============================================================
       # IAM - Lambda execution roles
