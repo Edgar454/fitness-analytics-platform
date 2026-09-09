@@ -16,7 +16,7 @@ runs:
         echo "Ref: $GITHUB_REF"
         echo "Workflow: $GITHUB_WORKFLOW"
         echo "Event: $GITHUB_EVENT_NAME"
-        
+
     - name: Configure AWS
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -29,7 +29,7 @@ runs:
         terraform_version: 1.6
 
     - name: Terraform init
-      working-directory: infra
+      working-directory: terraform/main
       shell: bash
       run: terraform init
     
@@ -37,10 +37,10 @@ runs:
       uses: actions/download-artifact@v4
       with:
         name: dispatcher-lambda
-        path: infra/main
+        path: terraform/main
 
     - name: Terraform Plan
-      working-directory: infra/main
+      working-directory: terraform/main
       shell: bash
       run: terraform plan -out=tfplan
 
