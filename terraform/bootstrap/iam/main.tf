@@ -118,6 +118,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "s3:GetBucketTagging",
           "s3:PutBucketTagging",
           "s3:GetBucketPublicAccessBlock",
+          "s3:PutBucketPublicAccessBlock",
         ]
         Resource = "*"
       },
@@ -205,7 +206,8 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "sns:CreateSubscription",
           "sns:DeleteSubscription",
           "sns:GetSubscriptionAttributes",
-          "sns:SetSubscriptionAttributes"
+          "sns:SetSubscriptionAttributes",
+          "sns:Subscribe"
         ]
         Resource = "*"
       },
