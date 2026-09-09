@@ -53,11 +53,13 @@ resource "aws_iam_policy" "terraform_bootstrap" {
       # EC2 / VPC
       # ============================================================
 
+      
       {
         Sid    = "EC2NetworkingRead"
         Effect = "Allow"
         Action = [
           "ec2:DescribeVpcs",
+          "ec2:DescribeVpcAttribute",
           "ec2:DescribeSubnets",
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeRouteTables",
@@ -114,7 +116,8 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "s3:PutBucketPolicy",
           "s3:DeleteBucketPolicy",
           "s3:GetBucketTagging",
-          "s3:PutBucketTagging"
+          "s3:PutBucketTagging",
+          "s3:GetBucketPublicAccessBlock",
         ]
         Resource = "*"
       },
@@ -129,6 +132,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
         Action = [
           "kms:CreateKey",
           "kms:DescribeKey",
+          "kms:GetKeyRotationStatus",
           "kms:EnableKey",
           "kms:DisableKey",
           "kms:ScheduleKeyDeletion",
@@ -173,7 +177,8 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "secretsmanager:UpdateSecret",
           "secretsmanager:UpdateSecretVersionStage",
           "secretsmanager:TagResource",
-          "secretsmanager:UntagResource"
+          "secretsmanager:UntagResource",
+          "secretsmanager:GetResourcePolicy",
         ]
         Resource = "*"
       },
@@ -192,7 +197,8 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "sns:SetTopicAttributes",
           "sns:TagResource",
           "sns:UntagResource",
-          "sns:ListTags"
+          "sns:ListTags",
+          "sns:ListTagsForResource",
         ]
         Resource = "*"
       },
@@ -211,7 +217,8 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "sqs:SetQueueAttributes",
           "sqs:GetQueueUrl",
           "sqs:TagQueue",
-          "sqs:UntagQueue"
+          "sqs:UntagQueue",
+          "sqs:ListQueueTags",
         ]
         Resource = "*"
       },
@@ -270,6 +277,8 @@ resource "aws_iam_policy" "terraform_bootstrap" {
         ]
         Resource = "*"
       },
+
+
 
       # ============================================================
       # IAM - Lambda execution roles
