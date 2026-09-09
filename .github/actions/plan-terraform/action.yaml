@@ -26,8 +26,7 @@ runs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v4
       with:
-        terraform_version: 1.6
-
+        terraform_version: "1.11"
     - name: Terraform init
       working-directory: terraform/main
       shell: bash

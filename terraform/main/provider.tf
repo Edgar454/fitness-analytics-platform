@@ -1,6 +1,6 @@
 terraform {
 
-  required_version = ">= 1.6"
+  required_version = ">= 1.11"
 
   backend "s3" {
     bucket       = "edgar-fitness-terraform-state"
