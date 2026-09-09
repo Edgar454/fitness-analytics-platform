@@ -23,6 +23,8 @@ jobs:
           filters: |
             infra:
               - "terraform/main/**"
+              - "lambda/**"
+              - "ingestion/**"
 
   terraform-plan:
     needs: changes
