@@ -1,0 +1,21 @@
+name: Build lambda dispatcher
+description: Build .zip artifact for the lambda function
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Build dispatcher
+      shell: bash
+      run: |
+        ./lambda/build_dispatcher_lambda.sh
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dispatcher-lambda
+        path: dispatcher.zip

@@ -1,8 +1,8 @@
 from sqlalchemy import Enum, ForeignKey, UniqueConstraint , String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.models.base import Base
-from src.models.ingestion.jobs import JobEventType, JobStatus
+from ingestion.src.models.base import Base
+from ingestion.src.models.ingestion.jobs import JobEventType, JobStatus
 
 
 class JobStateTransition(Base):

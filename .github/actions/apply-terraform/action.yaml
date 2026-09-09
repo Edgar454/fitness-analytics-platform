@@ -26,24 +26,30 @@ runs:
         terraform_version: 1.6
 
     - name: Terraform init
-      working-directory: infra
+      working-directory: infra/main
       shell: bash
       run: terraform init
+    
+    - name: Download dispatcher artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: dispatcher-lambda
+        path: infra/main
 
     - name: Download plan artifact
       uses: actions/download-artifact@v4
       with:
         name: tfplan
-        path: infra
+        path: infra/main
 
     - name: Terraform apply
-      working-directory: infra
+      working-directory: infra/main
       shell: bash
       run: terraform apply -auto-approve tfplan
 
     - name: Export outputs
       id: tf
-      working-directory: infra
+      working-directory: infra/main
       shell: bash
       run: |
         ecr_url=$(terraform output -raw repository_url)

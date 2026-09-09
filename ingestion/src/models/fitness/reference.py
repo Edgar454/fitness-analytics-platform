@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
-from src.models.base import Base
+from ingestion.src.models.base import Base
 
 
 class Equipment(Base):

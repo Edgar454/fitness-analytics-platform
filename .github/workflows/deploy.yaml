@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/build-dispatcher
       - uses: ./.github/actions/plan-terraform
         with:
           github_role_arn: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
@@ -40,9 +41,10 @@ jobs:
     environment: terraform-apply
     runs-on: ubuntu-latest
     outputs:
-      ecr_url: ${{ steps.tf.outputs.ecr_url }}
+      ecr_url: ${{ steps.infra.outputs.ecr_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/apply-terraform
+        id: infra
         with:
           github_role_arn: ${{ secrets.AWS_GITHUB_ROLE_ARN }}

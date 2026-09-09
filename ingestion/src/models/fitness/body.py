@@ -1,6 +1,6 @@
 import enum
 
-from src.models.base import Base
+from ingestion.src.models.base import Base
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal

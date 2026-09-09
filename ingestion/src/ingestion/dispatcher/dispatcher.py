@@ -4,10 +4,10 @@ import asyncio
 import os
 from datetime import timedelta
 
-from src.database import RDSConnector
-from src.config import Config
+from ingestion.src.database import RDSConnector
+from ingestion.src.config import Config
 
-from src.ingestion.dispatcher.utils import (
+from ingestion.src.ingestion.dispatcher.utils import (
     create_job,
     get_active_users,
     get_sqs_client,

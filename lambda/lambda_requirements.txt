@@ -1,0 +1,4 @@
+sqlalchemy
+alembic
+asyncpg
+pydantic

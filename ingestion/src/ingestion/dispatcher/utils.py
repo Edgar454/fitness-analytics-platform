@@ -12,9 +12,9 @@ import sqlalchemy as sa
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.fitness.user import User
-from src.models.fitness.user import UserCredential
-from src.models.ingestion.jobs import IngestionJob
+from ingestion.src.models.fitness.user import User
+from ingestion.src.models.fitness.user import UserCredential
+from ingestion.src.models.ingestion.jobs import IngestionJob
 
 
 QUEUE_BY_CONNECTOR = {

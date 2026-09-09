@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.connectors.models.progress_photo_record import ProgressPhotoRecord
+from ingestion.src.connectors.models.progress_photo_record import ProgressPhotoRecord
 
 class ProgressPhotoBaseConnector(ABC):
     """
