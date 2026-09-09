@@ -59,7 +59,11 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "s3:PutObject",
           "s3:DeleteObject"
         ]
-        Resource = "arn:aws:s3:::edgar-fitness-terraform-state/fitness-platform/terraform.tfstate"
+        Resource = [
+          "arn:aws:s3:::edgar-fitness-terraform-state/fitness-platform/terraform.tfstate",
+          "arn:aws:s3:::edgar-fitness-terraform-state/fitness-platform/terraform.tfstate.tflock"
+        ]
+          
       }
     ]
   })
