@@ -41,6 +41,25 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "rds:DescribeDBParameters"
         ]
         Resource = "*"
+      },
+      {
+        Sid    = "TerraformStateBucket"
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket",
+          "s3:GetBucketLocation"
+        ]
+        Resource = "arn:aws:s3:::edgar-fitness-terraform-state"
+      },
+      {
+        Sid    = "TerraformStateObject"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ]
+        Resource = "arn:aws:s3:::edgar-fitness-terraform-state/fitness-platform/terraform.tfstate"
       }
     ]
   })
