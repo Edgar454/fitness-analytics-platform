@@ -297,7 +297,8 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "budgets:CreateBudget",
           "budgets:ModifyBudget",
           "budgets:DeleteBudget",
-          "budgets:DescribeBudget"
+          "budgets:DescribeBudget",
+          "budgets:ListTagsForResource",
         ]
         Resource = "*"
       },
