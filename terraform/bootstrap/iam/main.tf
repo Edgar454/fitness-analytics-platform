@@ -95,6 +95,18 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "arn:aws:s3:::edgar-fitness-terraform-state/fitness-platform/terraform.tfstate.tflock"
         ]
       },
+      {
+        Sid    = "ProgressPhotoBucketRead"
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket",
+          "s3:GetBucketLocation",
+          "s3:GetBucketVersioning",
+          "s3:GetBucketPublicAccessBlock",
+          "s3:GetBucketTagging"
+        ]
+        Resource = "arn:aws:s3:::edgar-fitness-progess-photos"
+      }
 
       # ============================================================
       # S3 - Application buckets
