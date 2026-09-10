@@ -9,18 +9,18 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.github_role_arn }}
+        aws-region: eu-west-1
+
     - name: Check AWS identity
       shell: bash
       run: |
         aws sts get-caller-identity
         aws s3api head-bucket --bucket edgar-fitness-progess-photos
         aws s3api get-bucket-location --bucket edgar-fitness-progess-photos
-
-    - name: Configure AWS
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: ${{ inputs.github_role_arn }}
-        aws-region: eu-west-1
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v4
