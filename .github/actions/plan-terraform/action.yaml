@@ -9,13 +9,12 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Debug GitHub context
+    - name: Check AWS identity
       shell: bash
       run: |
-        echo "Repository: $GITHUB_REPOSITORY"
-        echo "Ref: $GITHUB_REF"
-        echo "Workflow: $GITHUB_WORKFLOW"
-        echo "Event: $GITHUB_EVENT_NAME"
+        aws sts get-caller-identity
+        aws s3api head-bucket --bucket edgar-fitness-progess-photos
+        aws s3api get-bucket-location --bucket edgar-fitness-progess-photos
 
     - name: Configure AWS
       uses: aws-actions/configure-aws-credentials@v4
