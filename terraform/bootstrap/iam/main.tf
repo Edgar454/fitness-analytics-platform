@@ -106,7 +106,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "s3:GetBucketTagging"
         ]
         Resource = "arn:aws:s3:::edgar-fitness-progess-photos"
-      }
+      },
 
       # ============================================================
       # S3 - Application buckets
