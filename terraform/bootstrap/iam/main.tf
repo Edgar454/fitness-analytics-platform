@@ -106,6 +106,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "s3:GetBucketTagging",
           "s3:GetBucketAcl",
           "s3:GetBucketCORS",
+          "s3:GetBucketWebsite"
         ]
         Resource = "arn:aws:s3:::edgar-fitness-progess-photos"
       },
