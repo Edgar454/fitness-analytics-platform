@@ -113,6 +113,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "s3:GetLifecycleConfiguration",
           "s3:GetReplicationConfiguration",
           "s3:GetEncryptionConfiguration",
+          "s3:GetBucketObjectLockConfiguration"
         ]
         Resource = "arn:aws:s3:::edgar-fitness-progess-photos"
       },
