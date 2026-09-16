@@ -23,7 +23,7 @@ router = APIRouter(
 
 
 def get_kms_client():
-    return boto3.client("kms")
+    return boto3.client("kms", region_name=Config.AWS_REGION)
 
 
 def get_user_service(

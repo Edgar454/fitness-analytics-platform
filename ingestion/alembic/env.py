@@ -1,14 +1,17 @@
 from logging.config import fileConfig
 import asyncio
+import sys
+from pathlib import Path
 
 from alembic import context
-from sqlalchemy import pool , MetaData
+from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from src.config import Config
-from src.models.base import Base
+ROOT_DIR = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT_DIR))
 
-
+from ingestion.src.config import Config
+from ingestion.src.models.base import Base
 
 # Alembic Config object
 config = context.config

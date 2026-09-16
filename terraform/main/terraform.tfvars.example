@@ -1,0 +1,19 @@
+region = "eu-west-1"
+project_name = "sportfolio"
+
+bucket_name = "edgar-fitness-terraform-state"
+progress_photo_bucket_name = "edgar-fitness-progess-photos"
+
+alert_email = "mevaed4@gmail.com"
+
+# Lambda
+lambda_zip_path = ""
+
+active_user_window_days = 30
+
+
+# Database
+database_host     = ""
+db_user           = ""
+database_password = ""
+cert_path         = ""

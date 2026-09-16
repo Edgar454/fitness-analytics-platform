@@ -18,6 +18,8 @@ class CredentialService:
         self.db = db
         self.kms_client = kms_client
         self.kms_key_id = kms_key_id
+        print("KMS client region:", self.kms_client.meta.region_name)
+        print(f"Initialized CredentialService with KMS key ID: {self.kms_key_id}")
 
     async def create_credential(
         self,

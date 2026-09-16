@@ -22,6 +22,9 @@ cp -r ingestion "$PACKAGE_DIR/"
 echo "Copying Lambda handler..."
 cp lambda/dispatcher_handler.py "$PACKAGE_DIR/handler.py"
 
+echo "Copying key files..."
+cp global_pundle.pem "$PACKAGE_DIR/global_pundle.pem"
+
 echo "Creating ZIP..."
 cd "$PACKAGE_DIR"
 zip -r "../$ZIP_FILE" .

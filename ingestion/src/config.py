@@ -10,6 +10,7 @@ class Config:
     DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")
     DB_USER = os.environ.get("DB_USER")
     CERT_PATH = os.environ.get("CERT_PATH")
+    AWS_REGION = os.environ.get("AWS_REGION")
 
     # asyncpg : pas de sslmode/sslrootcert en query string (contrairement à
     # psycopg2) — il faut construire un ssl.SSLContext et le passer via

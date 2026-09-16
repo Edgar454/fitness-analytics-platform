@@ -36,6 +36,10 @@ jobs:
       - uses: ./.github/actions/plan-terraform
         with:
           github_role_arn: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+          database_host: ${{ secrets.DATABASE_HOST }}
+          db_user: ${{ secrets.DB_USER }}
+          database_password: ${{ secrets.DATABASE_PASSWORD }}
+          cert_path: ${{ secrets.CERT_PATH }}
 
   terraform-apply:
     needs: [changes, terraform-plan]

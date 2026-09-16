@@ -60,3 +60,36 @@ module "kms" {
   source = "./kms"
   tags   = local.common_tags
 }
+
+module "iam" {
+  source = "./modules/iam"
+
+  project_name = var.project_name
+
+  queue_arns = [
+    module.sqs.google_health_queue_arn,
+    module.sqs.lyfta_queue_arn,
+    module.sqs.fatsecret_queue_arn
+  ]
+
+  tags = local.common_tags
+}
+
+
+module "lambda" {
+  source = "./lambda"
+  tags   = local.common_tags
+
+  aws_region = var.region
+  active_user_window_days = var.active_user_window_days
+  dispatcher_role_arn = module.iam.dispatcher_role_arn
+  
+  google_health_queue_url = module.sqs.google_health_queue_url
+  fatsecret_queue_url = module.sqs.fatsecret_queue_url
+  lyfta_queue_url = module.sqs.lyfta_queue_url
+
+  database_host = var.database_host
+  database_password = var.database_password
+  cert_path = var.cert_path
+
+}

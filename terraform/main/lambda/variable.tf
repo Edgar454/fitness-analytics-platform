@@ -1,24 +1,12 @@
-variable "bucket_name" {
-    type = string
-}
-
-variable "progress_photo_bucket_name" {
-    type = string
-}
-
-variable "region" {
-    type = string
-}
-
 variable "project_name" {
-    type = string
+  type = string
 }
 
-variable "alert_email" {
-    type = string
+variable "tags" {
+    type = list(string)
 }
 
-variable "project_name" {
+variable "dispatcher_role_arn" {
   type = string
 }
 
@@ -26,12 +14,26 @@ variable "lambda_zip_path" {
   type = string
 }
 
+variable "aws_region" {
+  type = string
+}
 
 variable "active_user_window_days" {
   type    = number
   default = 30
 }
 
+variable "google_health_queue_url" {
+  type = string
+}
+
+variable "fatsecret_queue_url" {
+  type = string
+}
+
+variable "lyfta_queue_url" {
+  type = string
+}
 
 variable "database_host" {
   type = string

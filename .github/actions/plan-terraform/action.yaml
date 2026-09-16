@@ -6,8 +6,25 @@ inputs:
     description: ARN of the role to assume in order to apply terraform configuration
     required: true
 
+  database_host:
+    description: RDS database host
+    required: true
+
+  db_user:
+    description: Database username
+    required: true
+
+  database_password:
+    description: Database password
+    required: true
+
+  cert_path:
+    description: Path to the RDS CA certificate
+    required: true
+
 runs:
   using: composite
+
   steps:
     - name: Configure AWS
       uses: aws-actions/configure-aws-credentials@v4
@@ -19,16 +36,28 @@ runs:
       uses: hashicorp/setup-terraform@v4
       with:
         terraform_version: "1.11"
+
     - name: Terraform init
       working-directory: terraform/main
       shell: bash
       run: terraform init
-    
+
     - name: Download dispatcher artifact
       uses: actions/download-artifact@v4
       with:
         name: dispatcher-lambda
         path: terraform/main
+
+    - name: Generate terraform.tfvars
+      shell: bash
+      env:
+        AWS_REGION: eu-west-1
+        DATABASE_HOST: ${{ inputs.database_host }}
+        DB_USER: ${{ inputs.db_user }}
+        DATABASE_PASSWORD: ${{ inputs.database_password }}
+        CERT_PATH: ${{ inputs.cert_path }}
+        LAMBDA_ZIP_PATH: terraform/main/dispatcher.zip
+      run: ./scripts/generate_tfvars.sh terraform/main/terraform.tfvars
 
     - name: Terraform Plan
       working-directory: terraform/main
