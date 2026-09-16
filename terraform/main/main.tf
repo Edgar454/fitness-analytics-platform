@@ -62,7 +62,7 @@ module "kms" {
 }
 
 module "iam" {
-  source = "./modules/iam"
+  source = "./iam"
 
   project_name = var.project_name
 
