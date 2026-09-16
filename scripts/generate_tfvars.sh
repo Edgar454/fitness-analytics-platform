@@ -7,7 +7,7 @@ OUTPUT_FILE="${1:-terraform/terraform.tfvars}"
 mkdir -p "$(dirname "$OUTPUT_FILE")"
 
 cat > "$OUTPUT_FILE" <<EOF
-aws_region = "${AWS_REGION:-eu-west-1}"
+region = "${AWS_REGION:-eu-west-1}"
 project_name = "sportfolio"
 
 bucket_name = "edgar-fitness-terraform-state"
