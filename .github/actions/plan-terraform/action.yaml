@@ -57,7 +57,7 @@ runs:
         DATABASE_PASSWORD: ${{ inputs.database_password }}
         CERT_PATH: ${{ inputs.cert_path }}
         LAMBDA_ZIP_PATH: terraform/main/dispatcher.zip
-      run: ./scripts/generate_tfvars.sh terraform/main/terraform.tfvars
+      run: bash ./scripts/generate_tfvars.sh terraform/main/terraform.tfvars
 
     - name: Terraform Plan
       working-directory: terraform/main
