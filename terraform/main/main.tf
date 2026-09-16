@@ -77,11 +77,15 @@ module "iam" {
 
 module "lambda" {
   source = "./lambda"
+  project_name = var.project_name
   tags   = local.common_tags
 
   aws_region = var.region
   active_user_window_days = var.active_user_window_days
   dispatcher_role_arn = module.iam.dispatcher_role_arn
+
+  lambda_zip_path = var.lambda_zip_path
+
   
   google_health_queue_url = module.sqs.google_health_queue_url
   fatsecret_queue_url = module.sqs.fatsecret_queue_url
@@ -89,5 +93,6 @@ module "lambda" {
 
   database_host = var.database_host
   database_password = var.database_password
+  db_user = var.db_user
   cert_path = var.cert_path
 }
