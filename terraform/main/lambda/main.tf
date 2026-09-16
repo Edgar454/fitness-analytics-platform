@@ -15,8 +15,6 @@ resource "aws_lambda_function" "dispatcher" {
 
   environment {
     variables = {
-      AWS_REGION = var.aws_region
-
       ACTIVE_USER_WINDOW_DAYS = tostring(var.active_user_window_days)
 
       GOOGLE_HEALTH_QUEUE_URL = var.google_health_queue_url

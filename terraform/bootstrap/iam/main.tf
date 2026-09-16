@@ -336,6 +336,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
         Effect = "Allow"
         Action = [
           "iam:CreateRole",
+          "iam:GetRolePolicy",
           "iam:DeleteRole",
           "iam:GetRole",
           "iam:UpdateRole",

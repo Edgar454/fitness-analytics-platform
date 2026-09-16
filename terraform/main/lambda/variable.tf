@@ -14,10 +14,6 @@ variable "lambda_zip_path" {
   type = string
 }
 
-variable "aws_region" {
-  type = string
-}
-
 variable "active_user_window_days" {
   type    = number
   default = 30

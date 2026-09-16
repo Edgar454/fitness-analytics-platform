@@ -80,7 +80,6 @@ module "lambda" {
   project_name = var.project_name
   tags   = local.common_tags
 
-  aws_region = var.region
   active_user_window_days = var.active_user_window_days
   dispatcher_role_arn = module.iam.dispatcher_role_arn
 
