@@ -75,7 +75,6 @@ module "iam" {
   tags = local.common_tags
 }
 
-
 module "lambda" {
   source = "./lambda"
   tags   = local.common_tags
