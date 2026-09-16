@@ -1,46 +1,12 @@
-resource "aws_iam_role" "dispatcher" {
-  name = "${var.project_name}-dispatcher"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-
-    Statement = [{
-      Effect = "Allow"
-
-      Principal = {
-        Service = "lambda.amazonaws.com"
-      }
-
-      Action = "sts:AssumeRole"
-    }]
-  })
+resource "aws_sns_topic" "alerts" {
+  name = "${var.project_name}-alerts"
 
   tags = var.tags
 }
 
-resource "aws_iam_role_policy" "dispatcher" {
-  name = "${var.project_name}-dispatcher"
-  role = aws_iam_role.dispatcher.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-
-    Statement = [
-      {
-        Sid    = "SendIngestionJobs"
-        Effect = "Allow"
-
-        Action = [
-          "sqs:SendMessage"
-        ]
-
-        Resource = var.queue_arns
-      }
-    ]
-  })
+resource "aws_sns_topic_subscription" "email" {
+  topic_arn = aws_sns_topic.alerts.arn
+  protocol  = "email"
+  endpoint  = var.alert_email
 }
 
-resource "aws_iam_role_policy_attachment" "dispatcher_vpc" {
-  role       = aws_iam_role.dispatcher.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
