@@ -291,6 +291,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
         Action = [
           "lambda:CreateFunction",
           "lambda:DeleteFunction",
+          "lambda:GetFunctionCodeSigningConfig",
           "lambda:UpdateFunctionCode",
           "lambda:UpdateFunctionConfiguration",
           "lambda:GetFunction",
