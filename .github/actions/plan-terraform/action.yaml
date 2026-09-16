@@ -56,16 +56,9 @@ runs:
         DB_USER: ${{ inputs.db_user }}
         DATABASE_PASSWORD: ${{ inputs.database_password }}
         CERT_PATH: ${{ inputs.cert_path }}
-        LAMBDA_ZIP_PATH: terraform/main/dispatcher.zip
+        LAMBDA_ZIP_PATH: dispatcher.zip
       run: bash ./scripts/generate_tfvars.sh terraform/main/terraform.tfvars
     
-    - name: Validate terraform.tfvars
-      working-directory: terraform/main
-      shell: bash
-      run: |
-        grep -E '^[a-zA-Z_][a-zA-Z0-9_]*[[:space:]]*=' terraform.tfvars \
-          | sed 's/=.*$/= [REDACTED]/'
-
     - name: Terraform Plan
       working-directory: terraform/main
       shell: bash
