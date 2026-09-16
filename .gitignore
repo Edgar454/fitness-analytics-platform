@@ -21,6 +21,5 @@ wheels/
 *.ipynb
 
 #certificates
-*.pem
 *.http
 *.env
