@@ -3,7 +3,7 @@ variable "project_name" {
 }
 
 variable "tags" {
-    type = list(string)
+    type = map(string)
 }
 
 variable "dispatcher_role_arn" {
