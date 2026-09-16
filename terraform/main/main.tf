@@ -90,5 +90,4 @@ module "lambda" {
   database_host = var.database_host
   database_password = var.database_password
   cert_path = var.cert_path
-
 }
