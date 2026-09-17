@@ -67,6 +67,20 @@ resource "aws_iam_policy" "terraform_bootstrap" {
         ]
         Resource = "*"
       },
+    {
+      Sid    = "EC2SecurityGroupManagement"
+      Effect = "Allow"
+      Action = [
+        "ec2:CreateSecurityGroup",
+        "ec2:DeleteSecurityGroup",
+        "ec2:AuthorizeSecurityGroupIngress",
+        "ec2:RevokeSecurityGroupIngress",
+        "ec2:AuthorizeSecurityGroupEgress",
+        "ec2:RevokeSecurityGroupEgress",
+        "ec2:CreateTags"
+      ]
+      Resource = "*"
+    },
 
       # ============================================================
       # S3 - Terraform state
