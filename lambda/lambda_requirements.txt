@@ -2,3 +2,4 @@ sqlalchemy
 alembic
 asyncpg
 pydantic
+python-dotenv
