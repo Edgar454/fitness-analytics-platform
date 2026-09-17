@@ -6,6 +6,6 @@ output "security_group_ids" {
     value = [aws_security_group.rds.id]
 }
 
-output "lambda_security_group" {
+output "lambda_security_group_id" {
     value = aws_security_group.lambda.id
 }
