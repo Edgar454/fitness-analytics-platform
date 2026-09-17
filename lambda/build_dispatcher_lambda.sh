@@ -23,7 +23,7 @@ echo "Copying Lambda handler..."
 cp lambda/dispatcher_handler.py "$PACKAGE_DIR/handler.py"
 
 echo "Copying key files..."
-cp ingestion/global-bundle.pem "$PACKAGE_DIR/global_bundle.pem"
+cp ingestion/global-bundle.pem "$PACKAGE_DIR/global-bundle.pem"
 
 echo "Creating ZIP..."
 cd "$PACKAGE_DIR"
