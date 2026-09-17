@@ -47,3 +47,11 @@ variable "database_password" {
 variable "cert_path" {
   type = string
 }
+
+variable "subnet_ids" {
+  type = list(string)
+}
+
+variable "lambda_security_group_id" {
+  type = string
+}

@@ -13,6 +13,11 @@ resource "aws_lambda_function" "dispatcher" {
   timeout     = 60
   memory_size = 512
 
+  vpc_config {
+    subnet_ids         = var.subnet_ids
+    security_group_ids = [var.lambda_security_group_id]
+  }
+
   environment {
     variables = {
       ACTIVE_USER_WINDOW_DAYS = tostring(var.active_user_window_days)

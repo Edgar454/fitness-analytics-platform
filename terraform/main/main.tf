@@ -84,8 +84,9 @@ module "lambda" {
   dispatcher_role_arn = module.iam.dispatcher_role_arn
 
   lambda_zip_path = var.lambda_zip_path
+  subnet_ids = data.aws_subnets.default.ids
+  lambda_security_group_id = module.network.lambda_security_group_id
 
-  
   google_health_queue_url = module.sqs.google_health_queue_url
   fatsecret_queue_url = module.sqs.fatsecret_queue_url
   lyfta_queue_url = module.sqs.lyfta_queue_url

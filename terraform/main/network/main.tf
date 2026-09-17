@@ -22,6 +22,21 @@ resource "aws_security_group" "rds" {
   }
 }
 
+resource "aws_security_group" "lambda" {
+  name        = "sportfolio-lambda-sg"
+  description = "Security group for dispatcher Lambda"
+  vpc_id      = var.vpc_id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol     = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = var.tags
+}
+
 # --- Subnet group ---
 
 resource "aws_db_subnet_group" "this" {
