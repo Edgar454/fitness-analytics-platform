@@ -136,6 +136,7 @@ async def create_job(
     queue_url = QUEUE_BY_CONNECTOR[connector]
 
     try:
+        print(f"Sending job {job_id} to {queue_url}")
         sqs_client.send_message(
             QueueUrl=queue_url,
             MessageBody=json.dumps(
@@ -144,6 +145,7 @@ async def create_job(
                 }
             ),
         )
+        print(f"Successfully sent job {job_id} to SQS")
     except Exception:
         # Job remains CREATED.
         # It can be retried by the dispatcher later.

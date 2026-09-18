@@ -12,9 +12,11 @@ class UserService:
         self.db = db
 
     async def create_user(self, data: UserCreate) -> User:
+        now = datetime.now(timezone.utc)
         user = User(
             email=data.email,
-            created_at=datetime.now(timezone.utc),
+            created_at= now,
+            last_active= now,
         )
 
         self.db.add(user)

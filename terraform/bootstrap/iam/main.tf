@@ -62,6 +62,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "ec2:DescribeVpcAttribute",
           "ec2:DescribeSubnets",
           "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSecurityGroupRules",
           "ec2:DescribeRouteTables",
           "ec2:DescribeAvailabilityZones"
         ]

@@ -1,13 +1,16 @@
+from datetime import datetime, timezone
+
 from sqlalchemy import text
 
-from src.config import Config
-from src.database import RDSConnector
+from ingestion.src.config import Config
+from ingestion.src.database import RDSConnector
 
 
 db_connector = RDSConnector(
     Config.SQLALCHEMY_DATABASE_URI,
     connect_args=Config.get_ssl_connect_args(),
 )
+
 
 async def list_all_tables_in_db(db_connector: RDSConnector):
     async with db_connector.session() as db:
@@ -19,9 +22,9 @@ async def list_all_tables_in_db(db_connector: RDSConnector):
                 ORDER BY schemaname, tablename;
             """)
         )
-
         tables = result.fetchall()
         return tables
+
 
 async def remove_all_data_in_db(db_connector: RDSConnector):
     async with db_connector.session() as db:
@@ -35,7 +38,6 @@ async def remove_all_data_in_db(db_connector: RDSConnector):
                 WHERE schemaname = 'public';
             """)
         )
-
         tables = result.scalar()
 
         if tables:
@@ -48,10 +50,32 @@ async def remove_all_data_in_db(db_connector: RDSConnector):
 
         await db.commit()
 
+
+async def update_last_active(
+    db_connector: RDSConnector,
+    user_id: int,
+):
+    async with db_connector.session() as db:
+        await db.execute(
+            text("""
+                UPDATE fitness.users
+                SET last_active = :last_active
+                WHERE id = :user_id;
+            """),
+            {
+                "last_active": datetime.now(timezone.utc),
+                "user_id": user_id,
+            },
+        )
+
+        await db.commit()
+
+
 if __name__ == "__main__":
     import asyncio
+    user_id = 1  
 
-    tables  = asyncio.run(list_all_tables_in_db(db_connector))
+    tables = asyncio.run(update_last_active(db_connector , user_id))
     print(f"Tables in the database: {tables}")
 
     print("All data removed from the database.")
