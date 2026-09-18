@@ -47,7 +47,7 @@ resource "aws_db_subnet_group" "this" {
 
 # ---  security group rules ---
 
-# Allow inound traffic from lambda
+# Allow inbound traffic from lambda
 resource "aws_security_group_rule" "rds_from_lambda" {
   type                     = "ingress"
 
