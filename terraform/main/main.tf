@@ -37,6 +37,7 @@ module "secrets" {
 
 module "network" {
   source              = "./network"
+  region              = var.region
   tags                = local.common_tags
   vpc_id              = data.aws_vpc.default.id
   subnet_ids          = data.aws_subnets.default.ids
