@@ -6,14 +6,6 @@ resource "aws_security_group" "rds" {
   vpc_id      = var.vpc_id
   tags = var.tags
 
-  ingress {
-    description = "Postgres from allowed IPs"
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = var.allowed_cidr_blocks
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -46,6 +38,19 @@ resource "aws_db_subnet_group" "this" {
 }
 
 # ---  security group rules ---
+
+# Allow inbound traffic from allowed ips
+resource "aws_security_group_rule" "rds_from_allowed_ips" {
+  type              = "ingress"
+  security_group_id = aws_security_group.rds.id
+
+  description = "Postgres from allowed IPs"
+
+  from_port   = 5432
+  to_port     = 5432
+  protocol    = "tcp"
+  cidr_blocks = var.allowed_cidr_blocks
+}
 
 # Allow inbound traffic from lambda
 resource "aws_security_group_rule" "rds_from_lambda" {
