@@ -16,6 +16,8 @@ wheels/
 *.tfstate.backup
 *.terraform.lock.hcl
 *.terraform.tfstate.*
+terraform*.tfvars
+terraform*.json
 
 # notebooks
 *.ipynb
@@ -23,3 +25,4 @@ wheels/
 #certificates
 *.http
 *.env
+response*.json
