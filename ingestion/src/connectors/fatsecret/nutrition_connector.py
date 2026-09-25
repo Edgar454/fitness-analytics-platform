@@ -21,9 +21,9 @@ class FatSecretNutritionConnector(BaseConnector[NutritionRecord]):
 
     connector_name = "fatsecret"
 
-    def __init__(self, auth: FatSecretAuthConnector, admission_controller: RedisAdmissionController):
+    def __init__(self, auth: FatSecretAuthConnector, admission: RedisAdmissionController):
         self._auth = auth
-        self._admission = admission_controller
+        self._admission = admission
 
     async def fetch(
         self,

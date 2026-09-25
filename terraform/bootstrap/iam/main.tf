@@ -78,6 +78,11 @@ resource "aws_iam_policy" "terraform_bootstrap" {
         "ec2:RevokeSecurityGroupIngress",
         "ec2:AuthorizeSecurityGroupEgress",
         "ec2:RevokeSecurityGroupEgress",
+        "ec2:DescribeVpcEndpoints",
+        "ec2:DescribePrefixLists",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DeleteVpcEndpoints",
+        "ec2:CreateVpcEndpoint",
         "ec2:CreateTags"
       ]
       Resource = "*"

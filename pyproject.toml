@@ -5,9 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "aioboto3>=15.5.0",
     "alembic>=1.18.5",
     "asyncpg>=0.31.0",
-    "boto3>=1.43.87",
     "fastapi>=0.141.1",
     "fatsecret>=4.0.10",
     "httpx>=0.28.1",
