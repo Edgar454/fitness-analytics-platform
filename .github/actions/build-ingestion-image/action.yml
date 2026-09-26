@@ -1,0 +1,45 @@
+name: Build and push Docker image to ECR
+
+inputs:
+  role-to-assume:
+    required: true
+  aws-region:
+    required: true
+  repository:
+    required: true
+  dockerfile:
+    required: true
+  tag:
+    required: false
+    default: latest
+
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.role-to-assume }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Login to ECR
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Resolve ECR URL
+      id: ecr
+      shell: bash
+      run: |
+        URL=$(aws ecr describe-repositories \
+          --repository-names "${{ inputs.repository }}" \
+          --query 'repositories[0].repositoryUri' \
+          --output text)
+
+        echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+    - name: Build and push
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ${{ inputs.dockerfile }}
+        push: true
+        tags: ${{ steps.ecr.outputs.url }}:${{ inputs.tag }}

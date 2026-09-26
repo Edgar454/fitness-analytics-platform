@@ -25,6 +25,8 @@ jobs:
               - "terraform/main/**"
               - "lambda/**"
               - "ingestion/**"
+            build:
+              - "ingestion/**"
 
   terraform-plan:
     needs: changes
@@ -54,3 +56,17 @@ jobs:
         id: infra
         with:
           github_role_arn: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+  
+  build-ingestion-image:
+    needs: [changes, terraform-apply]
+    if: needs.changes.outputs.build == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build-ingestion-image
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
+          aws-region: us-west-1
+          repository: health-analysis-worker
+          dockerfile: ingestion/Dockerfile
+          tag: latest

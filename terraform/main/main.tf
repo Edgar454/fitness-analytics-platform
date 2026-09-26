@@ -97,3 +97,9 @@ module "lambda" {
   db_user = var.db_user
   cert_path = var.cert_path
 }
+
+module "ecr" {
+  source = "./ecr"
+  project_name = var.project_name
+  tags   = local.common_tags
+}
