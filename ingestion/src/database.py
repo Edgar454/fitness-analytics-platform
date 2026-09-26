@@ -74,3 +74,4 @@ db_connector = RDSConnector(
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with db_connector.session() as db:
         yield db
+
