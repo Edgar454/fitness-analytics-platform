@@ -409,6 +409,7 @@ resource "aws_iam_policy" "terraform_ecr" {
           "ecr:PutLifecyclePolicy",
           "ecr:DeleteLifecyclePolicy",
           "ecr:GetLifecyclePolicy",
+          "ecr:ListTagsForResource",
           "ecr:TagResource",
           "ecr:UntagResource"
         ]
