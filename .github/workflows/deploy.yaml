@@ -67,6 +67,6 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
           aws-region: us-west-1
-          repository: health-analysis-worker
+          repository: sportfolio-worker
           dockerfile: ingestion/Dockerfile
           tag: latest
