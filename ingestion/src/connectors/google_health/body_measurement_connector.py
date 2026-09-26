@@ -4,10 +4,10 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from src.connectors.google_health.auth import GoogleAuthConnector
-from src.connectors.base_connector import BaseConnector
-from src.connectors.models.body_measurement_record import BodyMeasurementRecord
-from src.rate_limiter.redis_admission import RedisAdmissionController
+from ingestion.src.connectors.google_health.auth import GoogleAuthConnector
+from ingestion.src.connectors.base_connector import BaseConnector
+from ingestion.src.connectors.models.body_measurement_record import BodyMeasurementRecord
+from ingestion.src.rate_limiter.redis_admission import RedisAdmissionController
 
 
 

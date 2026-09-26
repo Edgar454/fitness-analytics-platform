@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ingestion.src.models.fitness.user import Provider, UserCredential
@@ -35,20 +36,31 @@ class CredentialService:
             Plaintext=payload,
         )
 
-        credential = UserCredential(
-            user_id=user_id,
-            provider=provider,
-            encrypted_payload=response["CiphertextBlob"],
-            active=True,
-            created_at=datetime.now(timezone.utc),
+        now = datetime.now(timezone.utc)
+
+        stmt = (
+            pg_insert(UserCredential)
+            .values(
+                user_id=user_id,
+                provider=provider,
+                encrypted_payload=response["CiphertextBlob"],
+                active=True,
+                created_at=now,
+            )
+            .on_conflict_do_update(
+                index_elements=["user_id", "provider"],
+                set_={
+                    "encrypted_payload": response["CiphertextBlob"],
+                    "active": True,
+                },
+            )
+            .returning(UserCredential)
         )
 
-        self.db.add(credential)
-
+        result = await self.db.execute(stmt)
         await self.db.commit()
-        await self.db.refresh(credential)
 
-        return credential
+        return result.scalar_one()
 
     async def get_user_credentials(
         self,

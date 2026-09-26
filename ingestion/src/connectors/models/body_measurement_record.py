@@ -11,7 +11,6 @@ class BodyMeasurementRecord:
     indépendamment du provider (Google Health, Lyfta, etc.).
     Correspond à une seule mesure (un measure_type, une valeur, un instant donné).
     """
-
     measured_at: datetime
     measure_type_name: str  # ex: "bodyfat", "waist" — résolu vers measure_type.id au moment du load
     value: Decimal

@@ -1,12 +1,12 @@
-from datetime import datetime
+from datetime import datetime , timezone
 from decimal import Decimal, InvalidOperation
 from typing import Optional
 import httpx
 
-from src.connectors.lyfta.auth import LyftaAuthConnector
-from src.connectors.base_connector import BaseConnector
-from src.connectors.models.workout_records import WorkoutSessionRecord, WorkoutSetRecord, WorkoutPrRecord
-from src.rate_limiter.redis_admission import RedisAdmissionController
+from ingestion.src.connectors.lyfta.auth import LyftaAuthConnector
+from ingestion.src.connectors.base_connector import BaseConnector
+from ingestion.src.connectors.models.workout_records import WorkoutSessionRecord, WorkoutSetRecord, WorkoutPrRecord
+from ingestion.src.rate_limiter.redis_admission import RedisAdmissionController
 
 
 
@@ -79,7 +79,7 @@ class LyftaWorkoutConnector(BaseConnector[WorkoutSessionRecord]):
 
                 stop = False
                 for workout in page_workouts:
-                    perform_date = datetime.strptime(workout["workout_perform_date"], "%Y-%m-%d %H:%M:%S")
+                    perform_date = datetime.strptime(workout["workout_perform_date"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
                     if perform_date < since:
                         stop = True
                         continue

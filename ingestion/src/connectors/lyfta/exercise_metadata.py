@@ -3,9 +3,9 @@ from datetime import datetime
 from typing import Optional
 import httpx
 
-from src.connectors.lyfta.auth import LyftaAuthConnector
-from src.connectors.base_connector import BaseConnector
-from src.connectors.models.workout_records import ExerciseMetadataRecord
+from ingestion.src.connectors.lyfta.auth import LyftaAuthConnector
+from ingestion.src.connectors.base_connector import BaseConnector
+from ingestion.src.connectors.models.workout_records import ExerciseMetadataRecord
 
 
 BASE_URL = "https://my.lyfta.app"

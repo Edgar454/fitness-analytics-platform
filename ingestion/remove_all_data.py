@@ -11,6 +11,15 @@ db_connector = RDSConnector(
     connect_args=Config.get_ssl_connect_args(),
 )
 
+async def truncate_ingestion_jobs(db_connector: RDSConnector) -> None:
+    async with db_connector.session() as db:
+        await db.execute(
+            text("""
+                TRUNCATE TABLE ingestion.jobs
+                RESTART IDENTITY
+                CASCADE;
+            """)
+        )
 
 async def list_all_tables_in_db(db_connector: RDSConnector):
     async with db_connector.session() as db:
@@ -75,7 +84,7 @@ if __name__ == "__main__":
     import asyncio
     user_id = 1  
 
-    tables = asyncio.run(update_last_active(db_connector , user_id))
+    tables = asyncio.run(truncate_ingestion_jobs(db_connector))
     print(f"Tables in the database: {tables}")
 
     print("All data removed from the database.")

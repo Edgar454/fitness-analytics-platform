@@ -74,7 +74,7 @@ async def add_job_event(
         },
     )
 
-    await db.commit()
+    
 
 
 async def start_job(

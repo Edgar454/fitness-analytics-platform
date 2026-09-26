@@ -2,16 +2,16 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.connectors.models.workout_records import WorkoutSessionRecord
+from ingestion.src.connectors.models.workout_records import WorkoutSessionRecord
 from ingestion.src.models.fitness.workout import WorkoutSession, WorkoutSet, WorkoutPr
-from src.loaders.references import get_or_create_exercise
+from ingestion.src.loaders.references import get_or_create_exercise
 
 
-async def load_workout_sessions(db: AsyncSession, records: list[WorkoutSessionRecord]) -> int:
+async def load_workout_sessions(db: AsyncSession, records: list[WorkoutSessionRecord] , user_id: int) -> int:
     count = 0
 
     for record in records:
-        session_id = await _upsert_session(db, record)
+        session_id = await _upsert_session(db, record, user_id)
         if session_id is None:
             continue
 
@@ -46,15 +46,16 @@ async def load_workout_sessions(db: AsyncSession, records: list[WorkoutSessionRe
     return count
 
 
-async def _upsert_session(db: AsyncSession, record: WorkoutSessionRecord) -> int | None:
+async def _upsert_session(db: AsyncSession, record: WorkoutSessionRecord, user_id: int) -> int | None:
     stmt = pg_insert(WorkoutSession).values(
         date=record.date,
         started_at=record.started_at,
+        user_id=user_id,
         ended_at=record.ended_at,
         duration=record.duration,
         sources=record.sources,
         notes=record.notes,
-    ).on_conflict_do_nothing(index_elements=["started_at"]).returning(WorkoutSession.id)
+    ).on_conflict_do_nothing(index_elements=["user_id","started_at"]).returning(WorkoutSession.id)
 
     result = await db.execute(stmt)
     session_id = result.scalar_one_or_none()

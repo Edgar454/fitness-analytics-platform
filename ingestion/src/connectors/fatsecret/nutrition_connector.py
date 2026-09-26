@@ -3,10 +3,10 @@ from collections import defaultdict
 from datetime import date, datetime , timedelta
 from decimal import Decimal
 
-from src.connectors.base_connector import BaseConnector
-from src.connectors.models.nutrition_record import NutritionRecord
-from src.connectors.fatsecret.auth import FatSecretAuthConnector
-from src.rate_limiter.redis_admission import RedisAdmissionController
+from ingestion.src.connectors.base_connector import BaseConnector
+from ingestion.src.connectors.models.nutrition_record import NutritionRecord
+from ingestion.src.connectors.fatsecret.auth import FatSecretAuthConnector
+from ingestion.src.rate_limiter.redis_admission import RedisAdmissionController
 
 
 

@@ -1,15 +1,16 @@
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.connectors.models.neat_record import NeatRecord
+from ingestion.src.connectors.models.neat_record import NeatRecord
 from ingestion.src.models.fitness.daily_telemetry import DailyHealth
 
 
-async def load_neat(db: AsyncSession, records: list[NeatRecord]) -> int:
+async def load_neat(db: AsyncSession, records: list[NeatRecord] , user_id: int) -> int:
     count = 0
 
     for record in records:
         stmt = pg_insert(DailyHealth).values(
+            user_id = user_id,
             date=record.date,
             steps=record.steps,
             active_minutes=record.active_minutes,
@@ -18,7 +19,7 @@ async def load_neat(db: AsyncSession, records: list[NeatRecord]) -> int:
             sleep_minutes=record.sleep_minutes,
             resting_hr=record.resting_hr,
             source=record.source,
-        ).on_conflict_do_nothing(index_elements=["date"])
+        ).on_conflict_do_nothing(index_elements=["date","user_id"])
 
         result = await db.execute(stmt)
         if result.rowcount > 0:

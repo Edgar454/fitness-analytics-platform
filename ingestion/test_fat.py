@@ -1,27 +1,21 @@
 from datetime import datetime
+from fatsecret import Fatsecret
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
-from src.config import Config
-from src.database import RDSConnector
+consumer_key= os.getenv("FATSECRET_CONSUMER_KEY")
+consumer_secret= os.getenv("FATSECRET_CONSUMER_SECRET")
 
-from src.connectors.lyfta.auth import LyftaAuthConnector
-from src.connectors.lyfta.exercise_metadata import LyftaExerciseMetadataConnector
-from src.loaders.workout import load_exercise_metadata
- 
-db_connector = RDSConnector(Config.SQLALCHEMY_DATABASE_URI)
+fs = Fatsecret(consumer_key, consumer_secret)
 
-auth = LyftaAuthConnector(api_key=os.environ["LYFTA_API_KEY"])
-connector = LyftaExerciseMetadataConnector(auth=auth)
+auth_url = fs.get_authorize_url()
 
-# since/until ignorés par ce connector, mais requis par la signature du contrat
-now = datetime.utcnow()
-records = connector.run(now, now)
-print(f"Exercise metadata records fetched: {len(records)}")
+print("Browse to the following URL in your browser to authorize access:\n{}"\
+    .format(auth_url))
 
-if records:
-    print("\nSample record:")
-    print(records[0])
+pin = input("Enter the PIN provided by FatSecret: ")
+session_token = fs.authenticate(pin)
 
-with db_connector.session() as db:
-    updated = load_exercise_metadata(db, records)
-    print(f"\nExercises updated: {updated}")
+print("Session Token: {}".format(session_token))
+print("Most Eaten Food Results: {}".format(len(foods)))

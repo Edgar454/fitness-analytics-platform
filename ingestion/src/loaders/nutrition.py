@@ -1,15 +1,16 @@
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.connectors.models.nutrition_record import NutritionRecord
+from ingestion.src.connectors.models.nutrition_record import NutritionRecord
 from ingestion.src.models.fitness.daily_telemetry import DailyNutrition
 
 
-async def load_nutrition(db: AsyncSession, records: list[NutritionRecord]) -> int:
+async def load_nutrition(db: AsyncSession, records: list[NutritionRecord], user_id: int) -> int:
     count = 0
 
     for record in records:
         stmt = pg_insert(DailyNutrition).values(
+            user_id = user_id ,
             date=record.date,
             calories=record.calories,
             protein=record.protein,
@@ -18,7 +19,7 @@ async def load_nutrition(db: AsyncSession, records: list[NutritionRecord]) -> in
             fiber=record.fiber,
             water=record.water,
             source=record.source,
-        ).on_conflict_do_nothing(index_elements=["date"])
+        ).on_conflict_do_nothing(index_elements=["date","user_id"])
 
         result = await db.execute(stmt)
         if result.rowcount > 0:

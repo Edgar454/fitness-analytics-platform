@@ -4,10 +4,10 @@ from decimal import Decimal
 from typing import Optional
 import httpx
 
-from src.connectors.google_health.auth import GoogleAuthConnector
-from src.connectors.base_connector import BaseConnector
-from src.connectors.models.neat_record import NeatRecord
-from src.rate_limiter.redis_admission import RedisAdmissionController
+from ingestion.src.connectors.google_health.auth import GoogleAuthConnector
+from ingestion.src.connectors.base_connector import BaseConnector
+from ingestion.src.connectors.models.neat_record import NeatRecord
+from ingestion.src.rate_limiter.redis_admission import RedisAdmissionController
 
 API_BASE = "https://health.googleapis.com/v4/users/me/dataTypes"
 DATA_SOURCE_FAMILY = "google-sources"
