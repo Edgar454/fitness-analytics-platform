@@ -67,7 +67,7 @@ jobs:
       - uses: ./.github/actions/build-image
         with:
           role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
-          aws-region: us-west-1
+          aws-region: eu-west-1
           repository: sportfolio-worker
           dockerfile: ingestion/Dockerfile
           tag: latest

@@ -410,6 +410,7 @@ resource "aws_iam_policy" "terraform_ecr" {
           "ecr:DeleteLifecyclePolicy",
           "ecr:GetLifecyclePolicy",
           "ecr:ListTagsForResource",
+          "ecr:GetAuthorizationToken",
           "ecr:TagResource",
           "ecr:UntagResource"
         ]
