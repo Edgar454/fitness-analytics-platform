@@ -418,3 +418,8 @@ resource "aws_iam_policy" "terraform_ecr" {
     ]
   })
 }
+
+resource "aws_iam_role_policy_attachment" "terraform_ecr" {
+  role       = aws_iam_role.github_bootstrap_role.name
+  policy_arn = aws_iam_policy.terraform_ecr.arn
+}
