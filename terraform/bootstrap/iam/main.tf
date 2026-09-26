@@ -226,7 +226,6 @@ resource "aws_iam_policy" "terraform_bootstrap" {
         ]
         Resource = "*"
       },
-
       # ============================================================
       # SNS
       # ============================================================
@@ -388,4 +387,34 @@ resource "aws_iam_policy" "terraform_bootstrap" {
 resource "aws_iam_role_policy_attachment" "bootstrap" {
   role       = aws_iam_role.github_bootstrap_role.name
   policy_arn = aws_iam_policy.terraform_bootstrap.arn
+}
+
+# ECR policy
+
+resource "aws_iam_policy" "terraform_ecr" {
+  name = "github-terraform-ecr"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Sid    = "ECRRepositoryManagement"
+        Effect = "Allow"
+
+        Action = [
+          "ecr:CreateRepository",
+          "ecr:DeleteRepository",
+          "ecr:DescribeRepositories",
+          "ecr:PutLifecyclePolicy",
+          "ecr:DeleteLifecyclePolicy",
+          "ecr:GetLifecyclePolicy",
+          "ecr:TagResource",
+          "ecr:UntagResource"
+        ]
+
+        Resource = "*"
+      }
+    ]
+  })
 }
