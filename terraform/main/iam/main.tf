@@ -103,9 +103,8 @@ resource "aws_iam_policy" "worker_policies" {
           "sqs:ChangeMessageVisibility"
         ]
 
-        Resource = [
-          var.queue_arns
-        ]
+        Resource = var.queue_arns
+        
       }
     ]
   })

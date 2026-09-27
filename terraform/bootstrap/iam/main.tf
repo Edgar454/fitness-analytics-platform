@@ -317,6 +317,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
         Effect = "Allow"
         Action = [
           "iam:CreateRole",
+          "iam:CreatePolicy",
           "iam:GetRolePolicy",
           "iam:DeleteRole",
           "iam:GetRole",
@@ -496,4 +497,34 @@ resource "aws_iam_policy" "terraform_ecs" {
 resource "aws_iam_role_policy_attachment" "terraform_ecs" {
   role       = aws_iam_role.github_bootstrap_role.name
   policy_arn = aws_iam_policy.terraform_ecs.arn
+}
+
+# ECS policy 
+
+resource "aws_iam_policy" "terraform_logs" {
+  name = "github-terraform-logs"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Sid    = "CloudWatchLogsManagement"
+        Effect = "Allow"
+
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:PutRetentionPolicy",
+          "logs:TagResource"
+        ]
+
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "terraform_logs" {
+  role       = aws_iam_role.github_bootstrap_role.name
+  policy_arn = aws_iam_policy.terraform_logs.arn
 }
