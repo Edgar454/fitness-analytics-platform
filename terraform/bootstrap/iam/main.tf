@@ -395,6 +395,7 @@ resource "aws_iam_policy" "terraform_ec2" {
           "ec2:ReleaseAddress",
           "ec2:DescribeAddressesAttribute",
           "ec2:CreateVpc",
+          "ec2:DeleteVpc",
           "ec2:ModifyVpcAttribute",
           "ec2:CreateRouteTable",
           "ec2:CreateRouteTable",

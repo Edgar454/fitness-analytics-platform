@@ -44,6 +44,7 @@ module "rds" {
 module "sqs" {
   source = "./sqs"
   tags   = local.common_tags
+  fatsecret_queue_name = "health-platform-fatsecret"
 }
 
 module "kms" {
@@ -97,4 +98,41 @@ module "ecs_cluster" {
   source = "./ecs_cluster"
   project_name = var.project_name
   tags  = local.common_tags
+}
+
+module fatsecret_log_group {
+  source = "./cloudwatch_logs"
+  project_name = var.project_name
+  tags  = local.common_tags
+  queue_name = "health-platform-fatsecret"
+}
+
+module "fatsecret_fargate" {
+  source = "./fargate"
+  project_name = var.project_name
+  tags  = local.common_tags
+  worker_provider = "fatsecret"
+  ecr_image = module.ecr.repository_url
+  queue_url = module.sqs.fatsecret_queue_url
+  redis_url =  var.redis_url
+  region  = var.region
+  database_host = var.database_host
+  database_password = var.database_password
+  db_user = var.db_user
+  log_group_name = module.fatsecret_log_group.log_group_name
+  cluster_id = module.ecs_cluster.cluster_id
+  cluster_name = module.ecs_cluster.cluster_name
+  subnet_ids = module.network.private_subnet_ids
+  security_group_ids = [module.network.ecs_security_group_id]
+  ecs_execution_role_arn = module.iam.ecs_execution_role_arn
+  ecs_task_role_arn = module.iam.ecs_task_role_arn
+
+}
+
+module "fatsecret_cloudwatch_metric_autoscaling" {
+  source = "./cloudwatch_metrics"
+  project_name = var.project_name
+  tags  = local.common_tags
+  autoscaling_policy_arn = module.fatsecret_fargate.autoscaling_policy_arn
+  queue_depth_threshold = 0
 }
