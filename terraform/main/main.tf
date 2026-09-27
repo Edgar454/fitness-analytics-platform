@@ -26,6 +26,7 @@ module "secrets" {
 
 module "network" {
   source              = "./network"
+  project_name        = var.project_name
   region              = var.region
   tags                = local.common_tags
   vpc_cidr             = "10.0.0.0/16"
