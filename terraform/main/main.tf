@@ -29,7 +29,7 @@ module "network" {
   project_name        = var.project_name
   region              = var.region
   tags                = local.common_tags
-  availability_zone    = ["eu-west-1a","eu-west-1b"]
+  availability_zones    = ["eu-west-1a","eu-west-1b"]
   allowed_cidr_blocks = ["196.118.112.98/32"]
 }
 
