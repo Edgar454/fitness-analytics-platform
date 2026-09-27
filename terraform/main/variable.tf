@@ -46,3 +46,7 @@ variable "database_password" {
 variable "cert_path" {
   type = string
 }
+
+variable "redis_url" {
+  type = string
+}
