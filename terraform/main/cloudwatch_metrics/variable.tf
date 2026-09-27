@@ -15,5 +15,5 @@ variable "autoscaling_policy_arn" {
 }
 
 variable "queue_depth_threshold"{
-    type = int
+    type = number
 }
