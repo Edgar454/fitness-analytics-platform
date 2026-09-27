@@ -17,6 +17,8 @@ resource "aws_db_instance" "this" {
   vpc_security_group_ids = var.security_group_ids 
   publicly_accessible    = true
 
+  apply_immediately = true
+
   backup_retention_period = 1
   skip_final_snapshot     = true
   deletion_protection     = false
