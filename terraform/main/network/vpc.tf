@@ -55,5 +55,9 @@ resource "aws_db_subnet_group" "this" {
   name       = "sportfolio-db-subnet-group"
   subnet_ids = [aws_subnet.private-a.id , aws_subnet.private-b.id ]
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = var.tags
 }

@@ -393,7 +393,24 @@ resource "aws_iam_policy" "terraform_ec2" {
           "ec2:AllocateAddress",
           "ec2:DescribeAddresses",
           "ec2:ReleaseAddress",
-          "ec2:DescribeAddressesAttribute"
+          "ec2:DescribeAddressesAttribute",
+          "ec2:CreateVpc",
+          "ec2:ModifyVpcAttribute",
+          "ec2:CreateRouteTable",
+          "ec2:CreateRouteTable",
+          "ec2:AssociateRouteTable",
+          "ec2:CreateRoute",
+          "ec2:CreateSubnet",
+          "ec2:DeleteSubnet",
+          "ec2:ModifySubnetAttribute",
+          "ec2:CreateInternetGateway",
+          "ec2:DescribeInternetGateways",
+          "ec2:AttachInternetGateway",
+          "ec2:DeleteInternetGateway",
+          "ec2:CreateNatGateway",
+          "ec2:DescribeNatGateways",
+          "ec2:DeleteNatGateway"
+
         ]
         Resource = "*"
       },
