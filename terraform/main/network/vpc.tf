@@ -52,7 +52,7 @@ resource "aws_subnet" "private-b" {
 }
 
 resource "aws_db_subnet_group" "this" {
-  name       = "sportfolio-db-subnet-group"
+  name       = "sportfolio-db-subnet-group-v2"
   subnet_ids = [aws_subnet.private-a.id , aws_subnet.private-b.id ]
 
   lifecycle {
