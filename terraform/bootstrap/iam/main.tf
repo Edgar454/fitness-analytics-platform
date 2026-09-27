@@ -50,48 +50,6 @@ resource "aws_iam_policy" "terraform_bootstrap" {
       },
 
       # ============================================================
-      # EC2 / VPC
-      # ============================================================
-
-      
-      {
-        Sid    = "EC2NetworkingRead"
-        Effect = "Allow"
-        Action = [
-          "ec2:DescribeVpcs",
-          "ec2:DescribeVpcAttribute",
-          "ec2:DescribeSubnets",
-          "ec2:DescribeSecurityGroups",
-          "ec2:DescribeSecurityGroupRules",
-          "ec2:DescribeRouteTables",
-          "ec2:DescribeAvailabilityZones"
-        ]
-        Resource = "*"
-      },
-    {
-      Sid    = "EC2SecurityGroupManagement"
-      Effect = "Allow"
-      Action = [
-        "ec2:CreateSecurityGroup",
-        "ec2:DeleteSecurityGroup",
-        "ec2:AuthorizeSecurityGroupIngress",
-        "ec2:RevokeSecurityGroupIngress",
-        "ec2:AuthorizeSecurityGroupEgress",
-        "ec2:RevokeSecurityGroupEgress",
-        "ec2:DescribeVpcEndpoints",
-        "ec2:DescribePrefixLists",
-        "ec2:DescribeNetworkInterfaces",
-        "ec2:DeleteVpcEndpoints",
-        "ec2:CreateVpcEndpoint",
-        "ec2:CreateTags",
-        "ec2:DetachNetworkInterface",
-        "ec2:AllocateAddress",
-        "ec2:DescribeAddresses"
-      ]
-      Resource = "*"
-    },
-
-      # ============================================================
       # S3 - Terraform state
       # ============================================================
 
@@ -392,6 +350,62 @@ resource "aws_iam_role_policy_attachment" "bootstrap" {
   policy_arn = aws_iam_policy.terraform_bootstrap.arn
 }
 
+# ECR policies
+
+resource "aws_iam_policy" "terraform_ec2" {
+  name = "github-terraform-ec2"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+        {
+          Sid    = "EC2NetworkingRead"
+          Effect = "Allow"
+          Action = [
+            "ec2:DescribeVpcs",
+            "ec2:DescribeVpcAttribute",
+            "ec2:DescribeSubnets",
+            "ec2:DescribeSecurityGroups",
+            "ec2:DescribeSecurityGroupRules",
+            "ec2:DescribeRouteTables",
+            "ec2:DescribeAvailabilityZones"
+          ]
+          Resource = "*"
+        },
+      {
+        Sid    = "EC2SecurityGroupManagement"
+        Effect = "Allow"
+        Action = [
+          "ec2:CreateSecurityGroup",
+          "ec2:DeleteSecurityGroup",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupEgress",
+          "ec2:DescribeVpcEndpoints",
+          "ec2:DescribePrefixLists",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteVpcEndpoints",
+          "ec2:CreateVpcEndpoint",
+          "ec2:CreateTags",
+          "ec2:DetachNetworkInterface",
+          "ec2:AllocateAddress",
+          "ec2:DescribeAddresses",
+          "ec2:ReleaseAddress",
+          "ec2:DescribeAddressesAttribute"
+        ]
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "terraform_ec2" {
+  role       = aws_iam_role.github_bootstrap_role.name
+  policy_arn = aws_iam_policy.terraform_ec2.arn
+}
+
 # ECR policy
 
 resource "aws_iam_policy" "terraform_ecr" {
@@ -451,6 +465,8 @@ resource "aws_iam_policy" "terraform_ecs" {
         Action = [
           "ecs:CreateCluster",
           "ecs:TagResource",
+          "ecs:DescribeClusters",
+          "ecs:DeleteCluster"
         ]
 
         Resource = "*"

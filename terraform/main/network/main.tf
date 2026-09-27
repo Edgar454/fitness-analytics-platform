@@ -5,6 +5,10 @@ resource "aws_security_group" "rds" {
   description = "Allow Postgres access from allowed IPs and ECS/Lambda"
   vpc_id      = aws_vpc.main.id
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
