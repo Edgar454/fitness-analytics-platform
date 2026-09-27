@@ -20,6 +20,8 @@ lambda_zip_path = "${LAMBDA_ZIP_PATH:-}"
 
 active_user_window_days = ${ACTIVE_USER_WINDOW_DAYS:-30}
 
+# cache
+redis_url = "${REDIS_URL:-}"
 
 # Database
 database_host     = "${DATABASE_HOST:-}"
