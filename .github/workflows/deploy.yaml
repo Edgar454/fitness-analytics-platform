@@ -43,6 +43,7 @@ jobs:
           db_user: ${{ secrets.DB_USER }}
           database_password: ${{ secrets.DATABASE_PASSWORD }}
           cert_path: ${{ secrets.CERT_PATH }}
+          redis_url: ${{ secrets.REDIS_URL }}
 
   terraform-apply:
     needs: [changes, terraform-plan]

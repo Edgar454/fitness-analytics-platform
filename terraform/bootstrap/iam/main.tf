@@ -319,8 +319,12 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "iam:CreateRole",
           "iam:CreatePolicy",
           "iam:GetRolePolicy",
+          "iam:DeletePolicy",
+          "iam:GetPolicyVersion",
+          "iam:ListPolicyVersions",
           "iam:DeleteRole",
           "iam:GetRole",
+          "iam:GetPolicy",
           "iam:UpdateRole",
           "iam:PutRolePolicy",
           "iam:DeleteRolePolicy",
@@ -485,7 +489,8 @@ resource "aws_iam_policy" "terraform_ecs" {
           "ecs:CreateCluster",
           "ecs:TagResource",
           "ecs:DescribeClusters",
-          "ecs:DeleteCluster"
+          "ecs:DeleteCluster",
+          "ecs:RegisterTaskDefinition"
         ]
 
         Resource = "*"
@@ -514,8 +519,11 @@ resource "aws_iam_policy" "terraform_logs" {
 
         Action = [
           "logs:CreateLogGroup",
+          "logs:DescribeLogGroups",
           "logs:PutRetentionPolicy",
-          "logs:TagResource"
+          "logs:TagResource",
+          "logs:ListTagsForResource",
+          "logs:DeleteLogGroup"
         ]
 
         Resource = "*"

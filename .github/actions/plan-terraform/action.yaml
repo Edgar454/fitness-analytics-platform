@@ -22,6 +22,10 @@ inputs:
     description: Path to the RDS CA certificate
     required: true
 
+  redis_url:
+    description: URL of the Redis instance
+    required: true
+
 runs:
   using: composite
 
@@ -56,6 +60,7 @@ runs:
         DB_USER: ${{ inputs.db_user }}
         DATABASE_PASSWORD: ${{ inputs.database_password }}
         CERT_PATH: ${{ inputs.cert_path }}
+        REDIS_URL: ${{ inputs.redis_url }}
         LAMBDA_ZIP_PATH: dispatcher.zip
       run: bash ./scripts/generate_tfvars.sh terraform/main/terraform.tfvars
     
