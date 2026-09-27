@@ -1,14 +1,3 @@
-data "aws_vpc" "default" {
-  default = true
-}
-
-data "aws_subnets" "default" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
-  }
-}
-
 module "progress_photo_s3" {
   source              = "./progress_photo_s3"
   tags                = local.common_tags
@@ -39,8 +28,10 @@ module "network" {
   source              = "./network"
   region              = var.region
   tags                = local.common_tags
-  vpc_id              = data.aws_vpc.default.id
-  subnet_ids          = data.aws_subnets.default.ids
+  vpc_cidr             = "10.0.0.0/16"
+  public_subnet_cidr   = "10.0.1.0/24"
+  private_subnet_cidr  = "10.0.2.0/24"
+  availability_zone    = "eu-west-1a"
   allowed_cidr_blocks = ["196.118.112.98/32"]
 }
 
@@ -85,7 +76,7 @@ module "lambda" {
   dispatcher_role_arn = module.iam.dispatcher_role_arn
 
   lambda_zip_path = var.lambda_zip_path
-  subnet_ids = data.aws_subnets.default.ids
+  subnet_ids = module.network.private_subnet_ids
   lambda_security_group_id = module.network.lambda_security_group_id
 
   google_health_queue_url = module.sqs.google_health_queue_url
@@ -102,4 +93,10 @@ module "ecr" {
   source = "./ecr"
   project_name = var.project_name
   tags   = local.common_tags
+}
+
+module "ecs_cluster" {
+  source = "./ecs_cluster"
+  project_name = var.project_name
+  tags  = local.common_tags
 }

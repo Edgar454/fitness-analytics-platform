@@ -410,9 +410,15 @@ resource "aws_iam_policy" "terraform_ecr" {
           "ecr:DeleteLifecyclePolicy",
           "ecr:GetLifecyclePolicy",
           "ecr:ListTagsForResource",
+          "ecr:BatchCheckLayerAvailability",
           "ecr:GetAuthorizationToken",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
           "ecr:TagResource",
-          "ecr:UntagResource"
+          "ecr:UntagResource",
+          "ecr:BatchGetImage",
+          "ecr:PutImage"
         ]
 
         Resource = "*"
