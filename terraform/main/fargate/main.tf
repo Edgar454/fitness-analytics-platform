@@ -45,7 +45,6 @@ resource "aws_ecs_task_definition" "worker" {
           name  = "DB_USER"
           value = var.db_user
         },
-        ,
         {
           name  = "CERT_PATH"
           value = var.cert_path
