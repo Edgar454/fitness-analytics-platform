@@ -1,4 +1,4 @@
-sqlalchemy
+sqlalchemy[asyncio]
 alembic
 asyncpg
 pydantic

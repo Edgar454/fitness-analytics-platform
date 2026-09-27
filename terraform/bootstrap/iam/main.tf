@@ -83,7 +83,10 @@ resource "aws_iam_policy" "terraform_bootstrap" {
         "ec2:DescribeNetworkInterfaces",
         "ec2:DeleteVpcEndpoints",
         "ec2:CreateVpcEndpoint",
-        "ec2:CreateTags"
+        "ec2:CreateTags",
+        "ec2:DetachNetworkInterface",
+        "ec2:AllocateAddress",
+        "ec2:DescribeAddresses"
       ]
       Resource = "*"
     },
@@ -430,4 +433,33 @@ resource "aws_iam_policy" "terraform_ecr" {
 resource "aws_iam_role_policy_attachment" "terraform_ecr" {
   role       = aws_iam_role.github_bootstrap_role.name
   policy_arn = aws_iam_policy.terraform_ecr.arn
+}
+
+# ECS policy 
+
+resource "aws_iam_policy" "terraform_ecs" {
+  name = "github-terraform-ecs"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Sid    = "ECSClusterManagement"
+        Effect = "Allow"
+
+        Action = [
+          "ecs:CreateCluster",
+          "ecs:TagResource",
+        ]
+
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "terraform_ecs" {
+  role       = aws_iam_role.github_bootstrap_role.name
+  policy_arn = aws_iam_policy.terraform_ecs.arn
 }
