@@ -16,7 +16,7 @@ resource "aws_route" "public_internet" {
 }
 
 resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.public.id
+  subnet_id      = aws_subnet.public-a.id
   route_table_id = aws_route_table.public.id
 }
 
@@ -37,7 +37,12 @@ resource "aws_route" "private_internet" {
   nat_gateway_id         = aws_nat_gateway.main.id
 }
 
-resource "aws_route_table_association" "private" {
-  subnet_id      = aws_subnet.private.id
+resource "aws_route_table_association" "private_a" {
+  subnet_id      = aws_subnet.private-a.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "private_b" {
+  subnet_id      = aws_subnet.private-b.id
   route_table_id = aws_route_table.private.id
 }

@@ -69,7 +69,7 @@ resource "aws_vpc_endpoint" "sqs" {
   vpc_endpoint_type = "Interface"
 
   subnet_ids = [
-    aws_subnet.private.id
+    aws_subnet.private-a.id
   ]
 
   security_group_ids = [
