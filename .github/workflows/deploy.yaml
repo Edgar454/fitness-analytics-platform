@@ -44,6 +44,7 @@ jobs:
           database_password: ${{ secrets.DATABASE_PASSWORD }}
           cert_path: ${{ secrets.CERT_PATH }}
           redis_url: ${{ secrets.REDIS_URL }}
+          load_test_data: ${{ secrets.LOAD_TEST_DATA }}
 
   terraform-apply:
     needs: [changes, terraform-plan]
