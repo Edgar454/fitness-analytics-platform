@@ -115,6 +115,7 @@ module "fatsecret_fargate" {
   worker_provider = "fatsecret"
   ecr_image = module.ecr.repository_url
   queue_url = module.sqs.fatsecret_queue_url
+  queue_name = "health-platform-fatsecret"
   redis_url =  var.redis_url
   region  = var.region
   database_host = var.database_host

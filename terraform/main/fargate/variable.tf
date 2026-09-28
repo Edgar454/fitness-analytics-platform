@@ -14,6 +14,10 @@ variable "queue_url" {
   type = string
 }
 
+variable "queue_name" {
+  type = string
+}
+
 variable "redis_url" {
   type = string
 }
