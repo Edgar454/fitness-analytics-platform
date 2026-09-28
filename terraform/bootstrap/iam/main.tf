@@ -514,6 +514,8 @@ resource "aws_iam_policy" "terraform_ecs" {
           "application-autoscaling:DescribeScalableTargets",
           "application-autoscaling:ListTagsForResource",
           "application-autoscaling:DeregisterScalableTarget",
+          "application-autoscaling:DescribeScalingPolicies",
+          "application-autoscaling:DeleteScalingPolicy"
         ]
 
         Resource = "*"
@@ -547,6 +549,30 @@ resource "aws_iam_policy" "terraform_logs" {
           "logs:TagResource",
           "logs:ListTagsForResource",
           "logs:DeleteLogGroup"
+        ]
+
+        Resource = "*"
+      },
+      {
+        Sid    = "CloudWatchMetricsManagement"
+        Effect = "Allow"
+
+        Action = [
+          "cloudwatch:PutMetricAlarm",
+          "cloudwatch:DescribeAlarms",
+          "cloudwatch:ListTagsForResource",
+          "cloudwatch:DeleteAlarms"
+        ]
+
+        Resource = "*"
+      },
+      {
+        Sid    = "CredentialsManagement"
+        Effect = "Allow"
+
+        Action = [
+          "kms:Decrypt",
+          "kms:Encrypt"
         ]
 
         Resource = "*"
