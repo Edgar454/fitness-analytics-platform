@@ -98,9 +98,9 @@ resource "aws_appautoscaling_target" "worker" {
 resource "aws_appautoscaling_policy" "worker_scale_out" {
   name               = "${var.project_name}-${var.worker_provider}-scale-out"
   policy_type        = "StepScaling"
-  service_namespace  = "ecs"
+  service_namespace  = aws_appautoscaling_target.worker.service_namespace
   resource_id        = "service/${var.cluster_name}/${aws_ecs_service.worker.name}"
-  scalable_dimension = "ecs:service:DesiredCount"
+  scalable_dimension = aws_appautoscaling_target.worker.scalable_dimension
 
   step_scaling_policy_configuration {
     adjustment_type         = "ChangeInCapacity"

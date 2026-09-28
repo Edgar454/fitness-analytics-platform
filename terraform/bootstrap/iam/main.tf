@@ -333,7 +333,8 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "iam:ListRolePolicies",
           "iam:ListAttachedRolePolicies",
           "iam:TagRole",
-          "iam:UntagRole"
+          "iam:UntagRole",
+          "iam:CreateServiceLinkedRole"
         ]
         Resource = "*"
       },
@@ -490,7 +491,26 @@ resource "aws_iam_policy" "terraform_ecs" {
           "ecs:TagResource",
           "ecs:DescribeClusters",
           "ecs:DeleteCluster",
-          "ecs:RegisterTaskDefinition"
+          "ecs:RegisterTaskDefinition",
+          "ecs:DescribeTaskDefinition",
+          "ecs:DeregisterTaskDefinition",
+          "ecs:CreateService",
+          "ecs:UpdateService",
+          "ecs:DeleteService",
+          "ecs:DescribeServices",
+          "ecs:ListServices",
+          "ecs:ListTaskDefinitions"
+        ]
+
+        Resource = "*"
+      },
+      {
+        Sid    = "AutoscalingManagement"
+        Effect = "Allow"
+
+        Action = [
+          "application-autoscaling:RegisterScalableTarget",
+          "application-autoscaling:PutScalingPolicy"
         ]
 
         Resource = "*"
