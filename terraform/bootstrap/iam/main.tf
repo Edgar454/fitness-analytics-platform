@@ -331,6 +331,7 @@ resource "aws_iam_policy" "terraform_bootstrap" {
           "iam:AttachRolePolicy",
           "iam:DetachRolePolicy",
           "iam:ListRolePolicies",
+          "iam:CreatePolicyVersion",
           "iam:ListAttachedRolePolicies",
           "iam:TagRole",
           "iam:UntagRole",

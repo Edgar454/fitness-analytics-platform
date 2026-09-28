@@ -102,7 +102,7 @@ module "ecs_cluster" {
 }
 
 module fatsecret_log_group {
-  source = "./cloudwatch_logs"
+  source = "./cloudwatch"
   project_name = var.project_name
   tags  = local.common_tags
   queue_name = "health-platform-fatsecret"
@@ -130,11 +130,3 @@ module "fatsecret_fargate" {
 
 }
 
-module "fatsecret_cloudwatch_metric_autoscaling" {
-  source = "./cloudwatch_metrics"
-  project_name = var.project_name
-  tags  = local.common_tags
-  queue_name = "health-platform-fatsecret"
-  autoscaling_policy_arn = module.fatsecret_fargate.autoscaling_policy_arn
-  queue_depth_threshold = 0
-}

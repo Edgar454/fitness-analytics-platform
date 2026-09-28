@@ -88,25 +88,24 @@ variable "max_capacity" {
   default = 10
 }
 
+variable "backlog_per_task" {
+  type        = number
+  description = "Target number of visible SQS messages per running worker task."
+  default     = 5
+}
+
 variable "scale_out_cooldown" {
-  type    = number
-  default = 60
+  type        = number
+  description = "Cooldown in seconds after scaling out."
+  default     = 60
 }
 
-variable "scale_out_step_1" {
-  type    = number
-  default = 1
+variable "scale_in_cooldown" {
+  type        = number
+  description = "Cooldown in seconds after scaling in."
+  default     = 300
 }
 
-variable "scale_out_step_2" {
-  type    = number
-  default = 2
-}
-
-variable "scale_out_step_3" {
-  type    = number
-  default = 3
-}
 
 variable "tags" {
   type = map(string)

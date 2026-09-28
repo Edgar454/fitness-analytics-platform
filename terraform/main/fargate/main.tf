@@ -95,33 +95,68 @@ resource "aws_appautoscaling_target" "worker" {
 }
 
 
-resource "aws_appautoscaling_policy" "worker_scale_out" {
-  name               = "${var.project_name}-${var.worker_provider}-scale-out"
-  policy_type        = "StepScaling"
+resource "aws_appautoscaling_policy" "worker_backlog" {
+  name               = "${var.project_name}-${var.worker_provider}-backlog-per-task"
+  policy_type        = "TargetTrackingScaling"
   service_namespace  = aws_appautoscaling_target.worker.service_namespace
-  resource_id        = "service/${var.cluster_name}/${aws_ecs_service.worker.name}"
+  resource_id        = aws_appautoscaling_target.worker.resource_id
   scalable_dimension = aws_appautoscaling_target.worker.scalable_dimension
 
-  step_scaling_policy_configuration {
-    adjustment_type         = "ChangeInCapacity"
-    cooldown                = var.scale_out_cooldown
-    metric_aggregation_type = "Average"
+  target_tracking_scaling_policy_configuration {
+    target_value       = var.backlog_per_task
+    scale_out_cooldown = var.scale_out_cooldown
+    scale_in_cooldown  = var.scale_in_cooldown
 
-    step_adjustment {
-      metric_interval_lower_bound = 0
-      metric_interval_upper_bound = 10
-      scaling_adjustment           = var.scale_out_step_1
-    }
+    customized_metric_specification {
+      metrics {
+        id          = "backlog"
+        return_data = false
 
-    step_adjustment {
-      metric_interval_lower_bound = 10
-      metric_interval_upper_bound = 20
-      scaling_adjustment           = var.scale_out_step_2
-    }
+        metric_stat {
+          stat = "Sum"
 
-    step_adjustment {
-      metric_interval_lower_bound = 20
-      scaling_adjustment           = var.scale_out_step_3
+          metric {
+            namespace   = "AWS/SQS"
+            metric_name = "ApproximateNumberOfMessagesVisible"
+
+            dimensions {
+              name  = "QueueName"
+              value = var.queue_name
+            }
+          }
+        }
+      }
+
+      metrics {
+        id          = "running"
+        return_data = false
+
+        metric_stat {
+          stat = "Average"
+
+          metric {
+            namespace   = "ECS/ContainerInsights"
+            metric_name = "RunningTaskCount"
+
+            dimensions {
+              name  = "ClusterName"
+              value = var.cluster_name
+            }
+
+            dimensions {
+              name  = "ServiceName"
+              value = aws_ecs_service.worker.name
+            }
+          }
+        }
+      }
+
+      metrics {
+        id          = "bpt"
+        label       = "Backlog per task"
+        expression  = "IF(running > 0, backlog / running, backlog)"
+        return_data = true
+      }
     }
   }
 }
