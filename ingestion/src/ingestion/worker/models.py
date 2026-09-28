@@ -7,3 +7,4 @@ from ingestion.src.connectors.base_connector import BaseConnector
 class IngestionHandler:
     connector: BaseConnector
     loader: Callable[..., Awaitable[int]]
+
