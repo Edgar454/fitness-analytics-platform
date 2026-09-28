@@ -510,7 +510,10 @@ resource "aws_iam_policy" "terraform_ecs" {
 
         Action = [
           "application-autoscaling:RegisterScalableTarget",
-          "application-autoscaling:PutScalingPolicy"
+          "application-autoscaling:PutScalingPolicy",
+          "application-autoscaling:DescribeScalableTargets",
+          "application-autoscaling:ListTagsForResource",
+          "application-autoscaling:DeregisterScalableTarget",
         ]
 
         Resource = "*"

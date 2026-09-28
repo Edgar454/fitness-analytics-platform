@@ -109,11 +109,13 @@ resource "aws_appautoscaling_policy" "worker_scale_out" {
 
     step_adjustment {
       metric_interval_lower_bound = 0
+      metric_interval_upper_bound = 10
       scaling_adjustment           = var.scale_out_step_1
     }
 
     step_adjustment {
       metric_interval_lower_bound = 10
+      metric_interval_upper_bound = 20
       scaling_adjustment           = var.scale_out_step_2
     }
 
