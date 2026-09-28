@@ -14,7 +14,7 @@ bucket_name = "edgar-fitness-terraform-state"
 progress_photo_bucket_name = "edgar-fitness-progess-photos"
 
 alert_email = "mevaed4@gmail.com"
-load_test_data = ${LOAD_TEST_DATA:-false}
+load_test_enabled = ${LOAD_TEST_:-false}
 
 # Lambda
 lambda_zip_path = "${LAMBDA_ZIP_PATH:-}"
