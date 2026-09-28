@@ -128,6 +128,7 @@ module "fatsecret_fargate" {
   security_group_ids = [module.network.ecs_security_group_id]
   ecs_execution_role_arn = module.iam.ecs_execution_role_arn
   ecs_task_role_arn = module.iam.ecs_task_role_arn
+  min_capacity = 1
 
 }
 
