@@ -118,6 +118,7 @@ module "fatsecret_fargate" {
   queue_name = "health-platform-fatsecret"
   redis_url =  var.redis_url
   region  = var.region
+  load_test_enabled = var.load_test_enabled
   database_host = var.database_host
   database_password = var.database_password
   db_user = var.db_user

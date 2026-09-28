@@ -50,3 +50,7 @@ variable "cert_path" {
 variable "redis_url" {
   type = string
 }
+
+variable "load_test_enabled" {
+  type = string
+}

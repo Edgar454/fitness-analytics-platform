@@ -1,6 +1,10 @@
 import json
 import logging
 from datetime import datetime
+import asyncio 
+import os
+
+from redis import asyncio as redis_asyncio
 
 from ingestion.src.database import DatabaseConnector
 from ingestion.src.models.fitness.user import Provider
@@ -16,7 +20,7 @@ async def consume(
     queue_url: str,
     db_connector: DatabaseConnector,
     kms_client,
-    redis_client,
+    redis_client: redis_asyncio.Redis,
     since: datetime,
     until: datetime,
     wait_time: int = 20,
@@ -89,6 +93,9 @@ async def consume(
                     "SQS message deleted | job_id=%s",
                     job_id,
                 )
+
+                if os.getenv("LOAD_TEST") == "true":
+                    await asyncio.sleep(30)
 
             except Exception:
                 logger.exception(

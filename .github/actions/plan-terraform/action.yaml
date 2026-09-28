@@ -25,6 +25,9 @@ inputs:
   redis_url:
     description: URL of the Redis instance
     required: true
+    
+  load_test_data:
+    description: Whether to load test data into the database
 
 runs:
   using: composite
@@ -62,6 +65,7 @@ runs:
         CERT_PATH: ${{ inputs.cert_path }}
         REDIS_URL: ${{ inputs.redis_url }}
         LAMBDA_ZIP_PATH: dispatcher.zip
+        LOAD_TEST_DATA: ${{ inputs.load_test_data }}
       run: bash ./scripts/generate_tfvars.sh terraform/main/terraform.tfvars
     
     - name: Terraform Plan

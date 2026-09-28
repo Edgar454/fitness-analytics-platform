@@ -48,6 +48,10 @@ resource "aws_ecs_task_definition" "worker" {
         {
           name  = "CERT_PATH"
           value = var.cert_path
+        },
+        {
+          name  = "LOAD_TEST"
+          value = var.load_test_enabled
         }
       ]
 
