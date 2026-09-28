@@ -57,6 +57,7 @@ module "iam" {
 
   project_name = var.project_name
 
+  kms_key_arn = module.kms.key_arn
   queue_arns = [
     module.sqs.google_health_queue_arn,
     module.sqs.lyfta_queue_arn,

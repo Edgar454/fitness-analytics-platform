@@ -105,6 +105,16 @@ resource "aws_iam_policy" "worker_policies" {
 
         Resource = var.queue_arns
         
+      },
+      {
+        Sid    = "DecryptCredentials"
+        Effect = "Allow"
+
+        Action = [
+          "kms:Decrypt",
+        ]
+
+        Resource = var.kms_key_arn
       }
     ]
   })
