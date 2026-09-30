@@ -156,9 +156,15 @@ resource "aws_appautoscaling_policy" "worker_backlog" {
       }
 
       metrics {
+        id          = "safe_running"
+        return_data = false
+        expression  = "FILL(running, 0)"
+      }
+
+      metrics {
         id          = "bpt"
         label       = "Backlog per task"
-        expression  = "IF(running > 0, backlog / running, backlog)"
+        expression  = "IF(safe_running > 0, backlog / safe_running, 1)"
         return_data = true
       }
     }
