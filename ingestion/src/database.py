@@ -3,6 +3,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.pool import NullPool
 from ingestion.src.config import Config
 
 
@@ -28,6 +29,7 @@ class DatabaseConnector(ABC):
         SessionLocal = async_sessionmaker(
             bind=self.get_engine(),
             expire_on_commit=False,
+            poolclass=NullPool,
         )
 
         db = SessionLocal()
@@ -39,7 +41,7 @@ class DatabaseConnector(ABC):
         except Exception:
             import traceback
             traceback.print_exc()
-            #await db.rollback()
+            await db.rollback()
             raise
 
         finally:
