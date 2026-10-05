@@ -37,7 +37,9 @@ class DatabaseConnector(ABC):
             await db.commit()
 
         except Exception:
-            await db.rollback()
+            import traceback
+            traceback.print_exc()
+            #await db.rollback()
             raise
 
         finally:

@@ -149,6 +149,13 @@ async def create_job(
     except Exception:
         # Job remains CREATED.
         # It can be retried by the dispatcher later.
+        import traceback
+        traceback.print_exc()
+        print(
+            f"Failed to create job "
+            f"for user={user_id}, "
+            f"connector={connector}"
+        )
         raise
 
     # SQS accepted the message.
