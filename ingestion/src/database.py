@@ -28,8 +28,7 @@ class DatabaseConnector(ABC):
     async def session(self) -> AsyncIterator[AsyncSession]:
         SessionLocal = async_sessionmaker(
             bind=self.get_engine(),
-            expire_on_commit=False,
-            poolclass=NullPool,
+            expire_on_commit=False
         )
 
         db = SessionLocal()
@@ -65,7 +64,7 @@ class RDSConnector(DatabaseConnector):
 
     def get_engine(self):
         if self._engine is None:
-            self._engine = create_async_engine(self._database_url, connect_args=self._connect_args)
+            self._engine = create_async_engine(self._database_url, connect_args=self._connect_args, poolclass=NullPool)
         return self._engine
 
 
