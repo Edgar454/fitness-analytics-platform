@@ -123,15 +123,20 @@ async def create_job(
         created_at=datetime.now(timezone.utc),
     )
 
+    print(f"Creating job | user={user_id} | connector={connector}")
     db.add(job)
 
     # Execute INSERT so PostgreSQL generates job.id.
+    print("Before flush")
     await db.flush()
+    print(f"After flush | job_id={job.id}")
 
     job_id = job.id
 
     # Persist CREATED before attempting to enqueue.
+    print("Before first commit")
     await db.commit()
+    print("After first commit")
 
     queue_url = QUEUE_BY_CONNECTOR[connector]
 
@@ -162,6 +167,7 @@ async def create_job(
     # Now let PostgreSQL perform the state transition:
     #
     # CREATED + CREATED → QUEUED
+    print("Before add_job_event")
     await db.execute(
         sa.text(
             """
@@ -178,7 +184,10 @@ async def create_job(
             "source": "dispatcher",
         },
     )
+    print("After add_job_event")
 
+    print("Before second commit")
     await db.commit()
+    print("After second commit")
 
     return job_id
